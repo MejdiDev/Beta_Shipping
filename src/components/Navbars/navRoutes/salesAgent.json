@@ -1,0 +1,26 @@
+[
+    {
+        "label": "Dashboard",
+        "route": "/salesAgent"
+    },
+
+    {
+        "label": "Quotes",
+        "route": "/salesAgent/quotes"
+    },
+
+    {
+        "label": "Clients",
+        "route": "/salesAgent/clients"
+    },
+
+    {
+        "label": "Leads",
+        "route": "/salesAgent/leads"
+    },
+
+    {
+        "label": "Tasks",
+        "route": "/salesAgent/tasks"
+    }
+]

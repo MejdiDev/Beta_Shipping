@@ -1,0 +1,26 @@
+[
+    {
+        "label": "Dashboard",
+        "route": "/client"
+    },
+
+    {
+        "label": "Request Quote",
+        "route": "/client/clientrequest"
+    },
+
+    {
+        "label": "Quotes",
+        "route": "/client/quotes"
+    },
+
+    {
+        "label": "Shipments",
+        "route": "/client/shipments"
+    },
+
+    {
+        "label": "Docs",
+        "route": "/client/docs"
+    }
+]

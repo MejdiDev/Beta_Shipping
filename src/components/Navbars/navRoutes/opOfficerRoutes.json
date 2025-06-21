@@ -1,0 +1,16 @@
+[
+    {
+        "label": "Dashboard",
+        "route": "/operationalOfficer"
+    },
+    
+    {
+        "label": "Shipments",
+        "route": "/operationalOfficer/shipments"
+    },
+
+    {
+        "label": "Tasks",
+        "route": "/operationalOfficer/tasks"
+    }
+]

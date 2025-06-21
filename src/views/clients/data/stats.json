@@ -1,0 +1,26 @@
+[
+    {
+        "filter": "pending",
+        "icon": "fa fa-file",
+        "label": "Active Quote",
+        "color": "#3fccc1"
+    },
+    {
+        "filter": "quoted",
+        "icon": "fa fa-check",
+        "label": "Accepted",
+        "color": "#fe9a3b"
+    },
+    {
+        "filter": "accepted",
+        "icon": "fa fa-box",
+        "label": "Delivered",
+        "color": "#374658"
+    },
+    {
+        "filter": "rejected",
+        "icon": "fa fa-times",
+        "label": "Rejected",
+        "color": "#F44336"
+    }
+]
