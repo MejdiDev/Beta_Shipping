@@ -17,10 +17,5 @@
     {
         "label": "Shipments",
         "route": "/client/shipments"
-    },
-
-    {
-        "label": "Docs",
-        "route": "/client/docs"
     }
 ]

@@ -4,6 +4,69 @@ import { getShipments } from "services/ApiOperationalOfficer";
 
 import { useDropzone } from 'react-dropzone';
 import { uploadDocument } from "services/ApiOpOfficer";
+import FCLTab from "views/clients/requestTabs/FCLTab";
+import LCLTab from "views/clients/requestTabs/LCLTab";
+import AIRTab from "views/clients/requestTabs/AIRTab";
+
+const emptyQuote = {
+  "userId": "",
+  "origin": "",
+  "destination": "",
+  "weight": "",
+  "volume": "",
+  "dimensions": {
+    "height": "",
+    "width": "",
+    "length": ""
+  },
+  "incoterm": "",
+  "mode": "",
+  "status": "active",
+  "serviceLevel": "",
+  "reqDelivery": {
+    "$date": {
+      "$numberLong": ""
+    }
+  },
+  "readyDate": {
+    "$date": {
+      "$numberLong": ""
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": ""
+    }
+  },
+  "__v": ""
+}
+
+const docTypeOpt = [
+    "Master Air Waybill (MAWB)",
+    "House Air Waybill (HAWB)",
+    "Commercial Invoice",
+    "Packing List",
+    "Shipper's Letter of Instruction (SLI)",
+    "Dangerous Goods Declaration (DGD) / Shipper's Declaration for Dangerous Goods",
+    "Certificate of Origin (COO)",
+    "Export/Import Licenses",
+    "Security Declaration",
+    "Customs Declaration (Export/Import)",
+    "Proof of Delivery (POD)",
+    "Master Bill of Lading (MBL)",
+    "House Bill of Lading (HBL)",
+    "Booking Confirmation",
+    "Container Load Plan / Container Loading List",
+    "Dangerous Goods Manifest",
+    "Arrival Notice",
+    "Delivery Order",
+    "Bill of Lading (BOL) / Freight Bill / Waybill",
+    "CMR (Convention on the Contract for the International Carriage of Goods by Road)",
+    "Load Sheet / Manifest",
+    "Border Crossing Documents",
+    "Permits / Licenses",
+    "Delivery Note"
+];
 
 const UploadIcon = () => (
     <svg style={{ height: "100px" }} className="text-gray" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
@@ -42,12 +105,14 @@ const OpAgentShipments = () => {
     
     const [query, setQuery] = useState("");
 
-    const [status, setStatus] = useState("");
-    const [mode, setMode] = useState("");
-    const [service, setService] = useState("");
+    const [docType, setDocType] = useState("");
+    const [docCategory, setDocCategory] = useState("");
 
     const [docData, setDocData] = useState({ fileName: "", documentType: "" });
     const [upFile, setUpFile] = useState('');
+
+    const [floatingTab, setFloatingTab] = useState();
+    const [activeTab, setActiveTab] = useState("FCL");
 
     const handleClose = () => {
         setFocusShip();
@@ -103,83 +168,143 @@ const OpAgentShipments = () => {
                     if(e.target.id !== "window-wrapper") return
                     handleClose()
                 }}
+
+                style={{
+                    paddingTop: (floatingTab === 'addShip' ? "calc(80px + 18rem)" : "80px")
+                }}
             >
-                <div className="bg-white rounded-lg shadow-lg p-6" style={{ width: "645px" }}>
-                    <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Enter Document Information</h2>
-                    
-                    <form onSubmit={ handleSubmit } className="space-y-4 flex flex-col gap-3">
-                        {/* Document Category */}
-                        <div>
-                            <label htmlFor="status" className="text-sm font-medium text-gray-700">Document Type</label>
-                            <select
-                                name="documentType"
-                                value={ docData.documentType }
-                                onChange={ e => setDocData({ ...docData, documentType: e.target.value }) }
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="Master Air Waybill (MAWB)">Master Air Waybill (MAWB)</option>
-                                <option value="House Air Waybill (HAWB)">House Air Waybill (HAWB)</option>
-                                <option value="Commercial Invoice">Commercial Invoice</option>
-                                <option value="Packing List">Packing List</option>
-                                <option value="Shipper's Letter of Instruction (SLI)">Shipper's Letter of Instruction (SLI)</option>
-                                <option value="Dangerous Goods Declaration (DGD) / Shipper's Declaration for Dangerous Goods">Dangerous Goods Declaration (DGD) / Shipper's Declaration for Dangerous Goods</option>
-                                <option value="Certificate of Origin (COO)">Certificate of Origin (COO)</option>
-                                <option value="Export/Import Licenses">Export/Import Licenses</option>
-                                <option value="Security Declaration">Security Declaration</option>
-                                <option value="Customs Declaration (Export/Import)">Customs Declaration (Export/Import)</option>
-                                <option value="Proof of Delivery (POD)">Proof of Delivery (POD)</option>
-                                <option value="Master Bill of Lading (MBL)">Master Bill of Lading (MBL)</option>
-                                <option value="House Bill of Lading (HBL)">House Bill of Lading (HBL)</option>
-                                <option value="Booking Confirmation">Booking Confirmation</option>
-                                <option value="Container Load Plan / Container Loading List">Container Load Plan / Container Loading List</option>
-                                <option value="Dangerous Goods Manifest">Dangerous Goods Manifest</option>
-                                <option value="Arrival Notice">Arrival Notice</option>
-                                <option value="Delivery Order">Delivery Order</option>
-                                <option value="Bill of Lading (BOL) / Freight Bill / Waybill">Bill of Lading (BOL) / Freight Bill / Waybill</option>
-                                <option value="CMR (Convention on the Contract for the International Carriage of Goods by Road)">CMR (Convention on the Contract for the International Carriage of Goods by Road)</option>
-                                <option value="Load Sheet / Manifest">Load Sheet / Manifest</option>
-                                <option value="Border Crossing Documents">Border Crossing Documents</option>
-                                <option value="Permits / Licenses">Permits / Licenses</option>
-                                <option value="Delivery Note">Delivery Note</option>
-                            </select>
+                {
+                    floatingTab === 'addShip' &&
+
+                    <div className="flex flex-col items-center py-6 px-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
+                        {/* Tabs Navigation */}
+                        <div className="flex justify-center ml-3 mr-3 mb-3 w-full">
+                            <nav className="flex w-full max-w-2xl mx-auto rounded-lg overflow-hidden bg-gray p-2">
+                                {[
+                                { tab: "FCL", label: "FCL" },
+                                { tab: "LCL", label: "LCL" },
+                                { tab: "AIR", label: "AIR" },
+                                ].map(({ tab, label }, idx, arr) => (
+                                    <>
+                                        <button
+                                            type="button"
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab)}
+                                            className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
+                                                ${
+                                                    activeTab === tab
+                                                    ? "bg-white text-black border-b-2 border-transparent rounded-lg"
+                                                    : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
+                                                }
+                                                ${idx === 0 ? "rounded-l-lg" : ""}
+                                                ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
+                                            `}
+                                            style={{ outline: "none" }}
+                                        >
+                                            {label}
+                                        </button>
+
+                                        {
+                                            (idx !== 2) && (
+                                                <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
+                                            )
+                                        }
+                                    </>
+                                ))}
+                            </nav>
                         </div>
-
-                        {/* Document Type */}
-                        <div>
-                            <label htmlFor="status" className="text-sm font-medium text-gray-700">Document Category</label>
-                            <select
-                                name="documentCategory"
-                                value={ docData.documentCategory }
-                                onChange={ e => setDocData({ ...docData, documentCategory: e.target.value }) }
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="financial">Financial</option>
-                                <option value="operational">Operational</option>
-                            </select>
-                        </div>
-
-                        {/* File Upload */}
-                        <div>
-                            {
-                                focusShip &&
-
-                                <FileUpload
-                                    setUpFile={ setUpFile }
+                        
+                        {activeTab === "FCL" &&
+                            <div className="w-full">
+                                <FCLTab
+                                    formData={ emptyQuote }
+                                    handleChange={ () => {  } }
                                 />
-                            }
-                        </div>
+                            </div>
+                        }
+                        
+                        {activeTab === "LCL" &&
+                            <div className="w-full">
+                                <LCLTab
+                                    formData={ emptyQuote }
+                                    handleChange={ () => {  } }
+                                />
+                            </div>
+                        }
+                        
+                        {activeTab === "AIR" &&
+                            <div className="w-full">
+                                <AIRTab
+                                    formData={ emptyQuote }
+                                    handleChange={ () => {  } }
+                                />
+                            </div>
+                        }
+                    </div>
+                }
 
-                        <div className="flex justify-end gap-4 mt-6">
-                            <button className="bg-red-500 text-white px-4 py-2 rounded-lg bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
-                            <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" onClick={() => {
-                                
-                            }}>Submit</button>
-                        </div>
-                    </form>
-                </div>
+                {   floatingTab === 'addDoc' &&
+
+                    <div className="bg-white rounded-lg shadow-lg p-6" style={{ width: "645px" }}>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Enter Document Information</h2>
+                        
+                        <form onSubmit={ handleSubmit } className="space-y-4 flex flex-col gap-3">
+                            {/* Document Category */}
+                            <div>
+                                <label htmlFor="documentType" className="text-sm font-medium text-gray-700">Document Type</label>
+                                <select
+                                    name="documentType"
+                                    value={ docData.documentType }
+                                    onChange={ e => setDocData({ ...docData, documentType: e.target.value }) }
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    {
+                                        docTypeOpt.map((docType, index) => (
+                                            <option key={ index } value={ docType }>
+                                                { docType }
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+
+                            {/* Document Type */}
+                            <div>
+                                <label htmlFor="documentCategory" className="text-sm font-medium text-gray-700">Document Category</label>
+                                <select
+                                    name="documentCategory"
+                                    value={ docData.documentCategory }
+                                    onChange={ e => setDocData({ ...docData, documentCategory: e.target.value }) }
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="financial">Financial</option>
+                                    <option value="operational">Operational</option>
+                                </select>
+                            </div>
+
+                            {/* File Upload */}
+                            <div>
+                                {
+                                    focusShip &&
+
+                                    <FileUpload
+                                        setUpFile={ setUpFile }
+                                    />
+                                }
+                            </div>
+
+                            <div className="flex justify-end gap-4 mt-6">
+                                <button className="bg-red-500 text-white px-4 py-2 rounded-lg bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
+                                <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" onClick={() => {
+                                    
+                                }}>Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                }
             </div>
 
-            <div className="flex flex-col items-center bg-gray rounded-lg">
+            <div className="flex flex-col items-center bg-gray rounded-lg py-8">
                 <div className="mx-autp items-center flex flex-col justify-between md:flex-nowrap flex-wrap px-4" style={{ width: "1000px" }}>
                     <form className="md:flex hidden flex-row items-center lg:ml-auto w-full gap-6">
                         <div className="relative flex w-full flex-wrap items-stretch">
@@ -203,96 +328,96 @@ const OpAgentShipments = () => {
                     <div className="w-full mt-3 flex gap-4">
                         <div className="flex-1">
                             <label className="block  text-sm font-medium text-gray-700 mb-1">
-                                Status
+                                Document Type
                             </label>
             
                             <select onChange={ e => {
-                                setStatus(e.target.value)
+                                setDocType(e.target.value)
                 
                                 setShownShips(
                                     ships.filter(el => (
                                         el._id.includes(query) &&
-                                        (status.length !== 0 ? el.status === status : true) &&
-                                        (mode.length !== 0 ? el.mode === mode : true) &&
-                                        (service.length !== 0 ? el.service === service : true)
+                                        (docType.length !== 0 ? el.documentType === docType : true) &&
+                                        (docCategory.length !== 0 ? el.documentCategory === docCategory : true)
                                     ))
                                 )
                             }} className="w-full rounded-lg">
-                                <option value="requested">Requested</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                                <option value="delivered">Delivered</option>
-                                <option value="in transit">In Transit</option>
+                                {
+                                    docTypeOpt.map((docType, index) => (
+                                        <option key={ index } value={ docType }>
+                                            { docType }
+                                        </option>
+                                    ))
+                                }
                             </select>
                         </div>
             
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Mode
+                                Document Category
                             </label>
             
                             <select onChange={ e => {
-                                setMode(e.target.value)
+                                setDocCategory(e.target.value)
                 
                                 setShownShips(
                                     ships.filter(el => (
                                         el._id.includes(query) &&
-                                        (status.length !== 0 ? el.status === status : true) &&
-                                        (mode.length !== 0 ? el.mode === mode : true) &&
-                                        (service.length !== 0 ? el.service === service : true)
+                                        (docType.length !== 0 ? el.documentType === docType : true) &&
+                                        (docCategory.length !== 0 ? el.documentCategory === docCategory : true)
                                     ))
                                 )
-                            } } className="w-full rounded-lg">
-                                <option value="fcl">FCL</option>
-                                <option value="lcl">LCL</option>
-                                <option value="air">AIR</option>
-                            </select>
-                        </div>
-                        
-                        <div className="flex-1">
-                            <label className="block  text-sm font-medium text-gray-700 mb-1">
-                                Incoterm
-                            </label>
-            
-                            <select onChange={ e => {
-                                setService(e.target.value)
-                
-                                setShownShips(
-                                    ships.filter(el => (
-                                        el._id.includes(query) &&
-                                        (status.length !== 0 ? el.status === status : true) &&
-                                        (mode.length !== 0 ? el.mode === mode : true) &&
-                                        (service.length !== 0 ? el.service === service : true)
-                                    ))
-                                )
-                            } } className="w-full rounded-lg">
-                                <option value="FOB">FOB</option>
-                                <option value="CIF">CIF</option>
-                                <option value="EXW">EXW</option>
-                                <option value="DDP">DDP</option>
-                                <option value="DDU">DDU</option>
+                            }} className="w-full rounded-lg">
+                                <option value="financial">Financial</option>
+                                <option value="operational">Operational</option>
                             </select>
                         </div>
                     </div>
+                </div>
+
+                <div className="mt-8 w-full px-3" style={{ maxWidth: "1000px" }}>
+                    <button
+                        className="w-full bg-lightBlue-500 text-white py-2 px-6 rounded shadow-md"
+                        onClick={() => {
+                            setFloatingTab('addShip')
+
+                            document.querySelector("body").style.overflow = "hidden"
+                            document.getElementById("window-wrapper").style.display = "flex"
+
+                            setTimeout(() => {
+                            document.getElementById("window-wrapper").style.opacity = "1"
+                            }, 1);
+                        }}
+                    >Add Shipment</button>
                 </div>
         
                 <div className="px-3 w-full flex justify-center mt-8">
                     <div style={{ width: "1000px" }}>
                         {shownShips.length > 0 ? (
                             shownShips.map((shipment, index) =>
-                                <>
-                                    { getCard({ quote: shipment, index }) }
-                                    <button onClick={() => {
-                                        setFocusShip(shipment);
+                                <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-8 flex flex-col">
 
-                                        document.querySelector("body").style.overflow = "hidden"
-                                        document.getElementById("window-wrapper").style.display = "flex"
+                                    { getCard({ quote: shipment, index, to: ('/operationalOfficer/shipment/' + shipment._id) }) }
 
-                                        setTimeout(() => {
-                                        document.getElementById("window-wrapper").style.opacity = "1"
-                                        }, 1);
+                                    <div className="border-1 border-gray-300 bg-black h-1 mx-4"></div>
+
+                                    <button
+                                        className="py-4 outline-none"
+
+                                        onClick={() => {
+                                            setFloatingTab('addDoc')
+
+                                            setFocusShip(shipment);
+
+                                            document.querySelector("body").style.overflow = "hidden"
+                                            document.getElementById("window-wrapper").style.display = "flex"
+
+                                            setTimeout(() => {
+                                            document.getElementById("window-wrapper").style.opacity = "1"
+                                            }, 1);
                                     }}>Add Document</button>
-                                </>
+
+                                </div>
                             )
                         ) : (
                             <div className="col-span-full">

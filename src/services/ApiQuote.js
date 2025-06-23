@@ -46,6 +46,9 @@ export function getLabelColor(status) {
     case "pending":
       return"#3fccc1"
 
+    case "active":
+      return"#3fccc1"
+
     case "quoted":
       return"#fe9a3b"
 

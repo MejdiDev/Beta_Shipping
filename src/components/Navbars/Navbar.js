@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ShipIcon } from "lucide-react";
 import "assets/styles/tailwind.css";
 import IndexDropdown from "components/Dropdowns/IndexDropdown.js";
-import { checkNewNotifs } from "services/ApiClient";
+import { checkNewNotifs } from "services/ApiAll";
 
 export default function Navbar({ routes }) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);

@@ -78,8 +78,38 @@ export default function ClientRequest() {
     }
   };
 
+  const exQuote = {
+    origin: 'New York',
+    destination: 'Los Angeles',
+    weight: 1200,
+    volume: 250,
+
+    height: 2,
+    width: 2,
+    length: 3,
+
+    containerType: '40ft',
+    incoterm: 'fob',
+    mode: 'road',
+    serviceLevel: 'express',
+    reqDelivery: new Date('2025-07-10'),
+    readyDate: new Date('2025-07-05')
+  };
+
   return (
     <>
+      <button onClick={() => {
+        requestQuote(exQuote)
+          .then((response) => {
+              console.log(response);
+          })
+          .catch((error) => {
+              console.error("Error fetching Notifications:", error);
+          });
+      }}>
+        SEND TEST
+      </button>
+
       <form onSubmit={ handleSubmit } className="px-4 md:px-10">
         <div className="flex justify-center relative mr-4 pr-5 w-full">
           <div className="flex flex-col items-center max-w-800-px bg-white rounded-lg border-3 p-5" style={{ minWidth: "800px" }}>
@@ -100,29 +130,29 @@ export default function ClientRequest() {
                   { tab: "AIR", label: "AIR" },
                 ].map(({ tab, label }, idx, arr) => (
                   <>
-                  <button
-                    type="button"
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
-                    ${
-                      activeTab === tab
-                        ? "bg-white text-black border-b-2 border-transparent rounded-lg"
-                        : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
-                    }
-                    ${idx === 0 ? "rounded-l-lg" : ""}
-                    ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
-                  `}
-                    style={{ outline: "none" }}
-                  >
-                    {label}
-                  </button>
+                    <button
+                      type="button"
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
+                      ${
+                        activeTab === tab
+                          ? "bg-white text-black border-b-2 border-transparent rounded-lg"
+                          : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
+                      }
+                      ${idx === 0 ? "rounded-l-lg" : ""}
+                      ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
+                    `}
+                      style={{ outline: "none" }}
+                    >
+                      {label}
+                    </button>
 
-                  {
-                    (idx !== 2) && (
-                      <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
-                    )
-                  }
+                    {
+                      (idx !== 2) && (
+                        <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
+                      )
+                    }
                   </>
                 ))}
               </nav>

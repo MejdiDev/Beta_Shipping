@@ -42,7 +42,7 @@ const FCLTab = ({ formData, handleChange }) => {
                 </div>
             </div>
 
-            <div className="border-t border-gray-300 my-4 m-4 w-full"></div>
+            <div className="border-t border-gray-300 my-4 w-full flex w-full flex-1 mt-5 pt-4"></div>
 
             <div className="flex flex-col w-full p-4 pt-0 pb-0">
                 <h2 className="flex-1 text-2xl font-semibold  mb-3">Cargo Details</h2>
@@ -82,7 +82,7 @@ const FCLTab = ({ formData, handleChange }) => {
                 </div>
             </div>
 
-            <div className="border-t border-gray-300 my-4 m-4 w-full"></div>
+            <div className="border-t border-gray-300 my-4 w-full flex w-full flex-1 mt-5 pt-4"></div>
 
             <div className="flex flex-col w-full p-4 pt-0 pb-0">
                 <h2 className="flex-1 text-2xl font-semibold">Shipping Terms</h2>

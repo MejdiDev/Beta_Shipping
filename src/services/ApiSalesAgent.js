@@ -72,9 +72,46 @@ export const getRoleColor = role => {
   }
 }
 
+//Quotes
+
 export async function getQuotes() {
   try {
     const response = await axios.get(`${apiUrl}/quotes`, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function getQuoteById(id) {
+  try {
+    const response = await axios.get(`${apiUrl}/quotes/${id}`, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+//Offer
+
+export async function AddOffer(offerData) {
+  try {
+    const response = await axios.post(`${apiUrl}/offer`, offerData, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function CheckOfferExists(quoteId) {
+  try {
+    const response = await axios.get(`${apiUrl}/offer/check/exists?quoteId=${ quoteId }`, {
       withCredentials: true, // Include cookies in the request
     })
     return response.data;
@@ -221,11 +258,11 @@ export async function EditTask(formData) {
   }
 }
 
-//Notifs
+//Actors
 
-export async function getNotifs() {
+export async function getAllWithRole() {
   try {
-    const response = await axios.get(`${apiUrl}/notif?userId=${localStorage.getItem('userId')}`, {
+    const response = await axios.get(`${apiUrl}/getAllWithRole`, {
       withCredentials: true, // Include cookies in the request
     })
     return response.data;
@@ -234,9 +271,11 @@ export async function getNotifs() {
   }
 }
 
-export async function checkNewNotifs() {
+//Notifs
+
+export async function getNotifs() {
   try {
-    const response = await axios.get(`${apiUrl}/notif/checkNew?userId=${ localStorage.getItem('userId') }&lastChecked=${ localStorage.getItem('lastCheckedNotifs') }`, {
+    const response = await axios.get(`${apiUrl}/notif?userId=${localStorage.getItem('userId')}`, {
       withCredentials: true, // Include cookies in the request
     })
     return response.data;

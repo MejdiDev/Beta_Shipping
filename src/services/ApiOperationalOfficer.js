@@ -12,3 +12,14 @@ export async function getShipments() {
     throw error.response?.data || { message: "Network error, please try again" };
   }
 }
+
+export async function getTasks() {
+  try {
+    const response = await axios.get(`${apiUrl}/task`, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}

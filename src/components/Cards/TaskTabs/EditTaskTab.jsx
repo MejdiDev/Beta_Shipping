@@ -1,10 +1,26 @@
+import { useEffect, useState } from "react";
+import { getAllWithRole } from "services/ApiSalesAgent";
+
 const EditTaskTab = ({ formData={ title: "", assignedTo: "", priority: "", status: "", dueDate: new Date(), description: "" }, setFormData, handleClose, EditLead, setFocusId, getData }) => {
+    const [users, setUsers] = useState([]);
+    
     const formatInputDate = dateStr => {
         const dateObj = new Date(dateStr);
         const formattedDate = dateObj.toISOString().split('T')[0];
 
         return formattedDate;
     }
+
+    useEffect(() => {
+        getAllWithRole()
+            .then((response) => {
+                setUsers(response);
+            })
+            .catch((error) => {
+                console.error("Error fetching quotes:", error);
+            });
+    }, [])
+
     return (
         <div className="bg-white rounded-lg shadow-lg p-6" style={{ width: "645px" }}>
             <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Enter Lead Information</h2>
@@ -34,9 +50,12 @@ const EditTaskTab = ({ formData={ title: "", assignedTo: "", priority: "", statu
                         onChange={ e => setFormData({ ...formData, assignedTo: e.target.value }) }
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                    <option value="">Select User</option>
-                    <option value="685033c067a003c63b863ef9">User 1</option>
-                    <option value="685033c067a003c63b863ef9">User 2</option>
+                        <option value="">Select User</option>
+                        {
+                            users.map((user, index) => 
+                                <option value={user._id}>{ user.name + (user.last ? user.last : "") }</option>
+                            )
+                        }
                     </select>
                 </div>
 

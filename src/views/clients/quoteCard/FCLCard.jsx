@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { getLabelColor, capitalizeWords, formatDate } from "services/ApiQuote";
 
-const FCLCard = ({ quote, index, min=false }) => {
+//bg-white shadow-lg rounded-lg overflow-hidden mb-8
+
+const FCLCard = ({ quote, index, min=false, to }) => {
     return (
         <div key={index}>
-            <div className="position-relative bg-white shadow-lg flex flex-row space-y-4 rounded-lg overflow-hidden mb-8" style={{ height: "200px" }}>
+            <div className="position-relative flex flex-row space-y-4" style={{ height: "200px" }}>
             <div style={{ width: "6px", backgroundColor: getLabelColor(quote.status)}}></div>
             
             <div className="flex flex-col flex-1">
@@ -36,7 +38,7 @@ const FCLCard = ({ quote, index, min=false }) => {
                 <div>
                     <p className="text-xs text-gray-500">Container</p>
                     <h4 className="text-md font-semibold text-gray-700">
-                    { quote.containerType ? capitalizeWords(quote.containerType) : "N/A" }
+                        { quote.containerType ? capitalizeWords(quote.containerType) : "N/A" }
                     </h4>
                 </div>
 
@@ -103,7 +105,7 @@ const FCLCard = ({ quote, index, min=false }) => {
 
                     <div className="grid-cols-2 gap-4 flex mt-2">
                         <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
-                        Quote { capitalizeWords(quote.status) }
+                        { capitalizeWords(quote.status) }
                         </div>
                     </div>
 
@@ -111,27 +113,27 @@ const FCLCard = ({ quote, index, min=false }) => {
 
                     <div className="border-l-2">
                         <div className="flex flex-col justify-center items-center p-4 shadow-sm ml-5" style={{ width: "260px", height: "calc(100% - 65px)" }}>
-                        <div className="flex flex-row w-full justify-center mt-6">
-                            <p className="">Created&nbsp;</p>
-                            <h4 className="text-md font-semibold text-gray-700 mb-2">{ formatDate(quote.createdAt) }</h4>
-                        </div>
+                            <div className="flex flex-row w-full justify-center mt-6">
+                                <p className="">Created&nbsp;</p>
+                                <h4 className="text-md font-semibold text-gray-700 mb-2">{ quote.createdAt && formatDate(quote.createdAt) }</h4>
+                            </div>
 
-                        <div className="grid-cols-2 gap-4 flex mt-2">
-                            <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
-                            Quote { capitalizeWords(quote.status) }
+                            <div className="grid-cols-2 gap-4 flex mt-2">
+                                <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
+                                Quote { capitalizeWords(quote.status) }
+                                </div>
+                            </div>
+
+                            <div className="flex flex-row w-full justify-center mt-4">
+                                <p className="">Quote ID&nbsp;</p>
+                                <h4 className="text-md font-semibold text-gray-700 mb-2">{ "#" + quote._id.substring(0, 7) }</h4>
                             </div>
                         </div>
 
-                        <div className="flex flex-row w-full justify-center mt-4">
-                            <p className="">Quote ID&nbsp;</p>
-                            <h4 className="text-md font-semibold text-gray-700 mb-2">{ "#" + quote._id.substring(0, 7) }</h4>
-                        </div>
-                        </div>
-
-                        <Link>
-                        <div className="flex flex-row w-full justify-center mt-6">
-                            <h4 className="text-md font-semibold text-gray-700 mb-3">View Details</h4>
-                        </div>
+                        <Link to={ to }>
+                            <div className="flex flex-row w-full justify-center mt-6">
+                                <h4 className="text-md font-semibold text-gray-700 mb-3">View Details</h4>
+                            </div>
                         </Link>
                     </div>
                 }

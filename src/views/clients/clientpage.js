@@ -4,38 +4,14 @@ import "assets/styles/tailwind.css";
 import { getClientQuotes } from "services/ApiQuote";
 
 import jsonStats from "./data/stats.json";
-import FCLCard from "./quoteCard/FCLCard";
-import LCLCard from "./quoteCard/LCLCard";
-import AIRCard from "./quoteCard/AIRCard";
+import getCard from "components/Cards/CardQuoteShip";
+import { getShipments } from "services/ApiClient";
 
 export default function ClientPage() {
   const [ quotes, setQuotes ] = useState([]);
-  const [ stats, setStats ] = useState();
+  const [ ships, setShips ] = useState([]);
 
-  const getCard = ({ quote, index}) => {
-    switch(quote.mode) {
-      case "fcl":
-        return <FCLCard
-          quote={ quote }
-          index= { index }
-          min={ true }
-        />
-
-      case "lcl":
-        return <LCLCard
-          quote={ quote }
-          index= { index }
-          min={ true }
-        />
-
-      case "air":
-        return <AIRCard
-          quote={ quote }
-          index= { index }
-          min={ true }
-        />
-    }
-  }
+  const [ stats, setStats ] = useState([]);
 
   useEffect(() => {
     getClientQuotes()
@@ -44,6 +20,15 @@ export default function ClientPage() {
         setStats(jsonStats);
 
         console.log(response)
+      })
+      .catch((error) => {
+        console.error("Error fetching quotes:", error);
+      });
+
+    getShipments()
+      .then((response) => {
+        console.log("shipments: ", response)
+        setShips(response);
       })
       .catch((error) => {
         console.error("Error fetching quotes:", error);
@@ -95,13 +80,19 @@ export default function ClientPage() {
       </div>
 
       {/* Last 3 Quotes Section */}
-      <div className="flex">
-        <div className="w-1/2 p-8">
+      <div className="flex gap-8 mt-8 px-8">
+        <div className="flex-1">
           <div className="bg-blueGray-700rounded-lg p-8 shadow-lg bg-gray border-3 rounded-xl">
             <h2 className="text-xl font-semibold mb-4 text-blue-900">Your Recent Quotes</h2>
 
             {quotes.length > 0 ? (
-              quotes.splice(0, 3).map((quote, index) => getCard({ quote, index }))
+              quotes.slice(0, 3).map((quote, index) => 
+                <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+                  {
+                    getCard({ quote, index, min: true })
+                  }
+                </div>
+              )
             ) : (
               <div className="bg-white border border-gray-200 rounded-lg p-4 shadow text-center text-gray-500">
                 No recent quotes available.
@@ -116,9 +107,29 @@ export default function ClientPage() {
           </div>
         </div>
         
-        <div className="w-1/2 p-8">
+        <div className="flex-1">
           <div className="bg-blueGray-700rounded-lg p-8 shadow-lg bg-gray border-3 rounded-xl">
             <h2 className="text-xl font-semibold mb-4 text-blue-900">Your Recent Shipments</h2>
+
+            {ships.length > 0 ? (
+              ships.slice(0, 3).map((shipment, index) => 
+                <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+                  {
+                    getCard({ quote: shipment, index, min: true })
+                  }
+                </div>
+              )
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-lg p-4 shadow text-center text-gray-500">
+                No recent shipments available.
+              </div>
+            )}
+
+            <div className="mt-4 text-right">
+              <Link to="/client/shipments" className="text-sm text-blue-600 hover:underline">
+                View All Shipments →
+              </Link>
+            </div>
           </div>
         </div>
       </div>

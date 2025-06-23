@@ -14,17 +14,6 @@ export async function getNotifs() {
   }
 }
 
-export async function checkNewNotifs() {
-  try {
-    const response = await axios.get(`${apiUrl}/notif/checkNew?userId=${ localStorage.getItem('userId') }&lastChecked=${ localStorage.getItem('lastCheckedNotifs') }`, {
-      withCredentials: true, // Include cookies in the request
-    })
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Network error, please try again" };
-  }
-}
-
 export async function AddNotif(formData) {
   try {
     const response = await axios.post(`${apiUrl}/task`, { ...formData, assignedBy: localStorage.getItem('userId') }, {
@@ -40,10 +29,10 @@ export async function AddNotif(formData) {
 
 export async function getShipments() {
   try {
-    const response = await axios.get(`${apiUrl}/notif?userId=${localStorage.getItem('userId')}`, {
+    const response = await axios.get(`${apiUrl}/getShipments?userId=${localStorage.getItem('userId')}`, {
       withCredentials: true, // Include cookies in the request
     })
-    return response.data;
+    return response.data.shipments;
   } catch (error) {
     throw error.response?.data || { message: "Network error, please try again" };
   }
@@ -54,6 +43,17 @@ export async function getShipments() {
 export async function AcceptOffer(formData) {
   try {
     const response = await axios.post(`${apiUrl}/offer/accept`, { ...formData, clientId: localStorage.getItem('userId') }, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function GetOfferById(id) {
+  try {
+    const response = await axios.get(`${apiUrl}/offer/${id}`, {
       withCredentials: true, // Include cookies in the request
     })
     return response.data;

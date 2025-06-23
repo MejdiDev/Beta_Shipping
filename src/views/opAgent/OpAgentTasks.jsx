@@ -1,12 +1,12 @@
 import CardTable from "components/Cards/CardTable";
 import HeaderStats from "components/Headers/HeaderStats";
 import { useEffect, useState } from "react";
+import { getTasks } from "services/ApiOperationalOfficer";
 import { formatDate } from "services/ApiQuote";
-import { getTasks } from "services/ApiSalesAgent";
 import { getTaskColor } from "services/ApiSalesAgent";
 import { getPriorityColor } from "services/ApiSalesAgent";
 
-const TasksPage = () => {
+const OpAgentTasks = () => {
     const [tasks, setTasks] = useState([]);
     
     const getData = () => {
@@ -71,4 +71,4 @@ const TasksPage = () => {
     );
 }
 
-export default TasksPage;
+export default OpAgentTasks;

@@ -96,15 +96,6 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
-        <hr className="my-6 border-blueGray-300" />
-
-        <div className="flex flex-wrap items-center justify-center md:justify-between text-sm text-blueGray-500">
-          <div className="w-full md:w-6/12 px-4 text-center md:text-left">
-            © {new Date().getFullYear()} DocFlow. All rights reserved.
-          </div>
-          
-        </div>
       </div>
     </footer>
   );

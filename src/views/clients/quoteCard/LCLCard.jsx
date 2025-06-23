@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { getLabelColor, capitalizeWords, formatDate } from "services/ApiQuote";
 
-const LCLCard = ({ quote, index, min=false }) => {
+const LCLCard = ({ quote, index, min=false, to  }) => {
     return (
         <div key={index}>
-            <div className="position-relative bg-white shadow-lg flex flex-row space-y-4 rounded-lg overflow-hidden mb-8" style={{ height: "200px" }}>
+            <div className="position-relative flex flex-row space-y-4" style={{ height: "200px" }}>
             <div style={{ width: "6px", backgroundColor: getLabelColor(quote.status)}}></div>
             
             <div className="flex flex-col flex-1">
@@ -102,7 +102,7 @@ const LCLCard = ({ quote, index, min=false }) => {
 
                 <div className="grid-cols-2 gap-4 flex mt-2">
                     <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
-                    Quote { capitalizeWords(quote.status) }
+                    { capitalizeWords(quote.status) }
                     </div>
                 </div>
 
@@ -127,7 +127,7 @@ const LCLCard = ({ quote, index, min=false }) => {
                         </div>
                     </div>
 
-                    <Link>
+                    <Link to={ to }>
                         <div className="flex flex-row w-full justify-center mt-6">
                             <h4 className="text-md font-semibold text-gray-700 mb-3">View Details</h4>
                         </div>

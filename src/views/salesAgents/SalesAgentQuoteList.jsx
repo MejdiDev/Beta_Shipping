@@ -3,8 +3,9 @@ import "assets/styles/tailwind.css";
 import { getClientQuotes } from "services/ApiQuote";
 
 import getCard from "components/Cards/CardQuoteShip";
+import { getQuotes } from "services/ApiSalesAgent";
 
-export default function Clientquotes() {
+export default function SalesAgentQuoteList() {
   const [quotes, setQuotes] = useState([]);
   const [query, setQuery] = useState("");
 
@@ -28,7 +29,7 @@ export default function Clientquotes() {
   }
 
   useEffect(() => {
-    getClientQuotes()
+    getQuotes()
       .then((response) => {
         setQuotes(response);
         setShownQuotes(response);

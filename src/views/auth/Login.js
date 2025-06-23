@@ -25,7 +25,7 @@ export default function Login() {
       //Redirect based on user role
       switch (res.user.role) {
         case "client":
-          history.push("/client/clientpage");
+          history.push("/client/");
           break;
         case "admin":
           history.push("/admin");

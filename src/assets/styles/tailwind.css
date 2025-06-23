@@ -1451,6 +1451,10 @@ select {
   border-bottom-width: 1px;
 }
 
+.border-b-2 {
+  border-bottom-width: 2px;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -1680,6 +1684,10 @@ select {
 
 .font-normal {
   font-weight: 400;
+}
+
+.font-md {
+  font-weight: 500;
 }
 
 .font-semibold {
@@ -3301,5 +3309,8 @@ select {
   left: 0;
   right: 0;
   top: -80px;
+  padding-top: 80px;
+  padding-bottom: 3rem;
   backdrop-filter: blur(0.1875rem);
+  overflow-y: scroll;
 }

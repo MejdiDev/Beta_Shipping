@@ -53,9 +53,26 @@ const SalesAgentNotifs = () => {
             </div>
 
             <div>
-                {filteredNotifs.map((notif) => (
-                    <CardNotifs key={notif._id} notification={notif} userName={""} />
-                ))}
+                {
+                    filteredNotifs.length > 0 ? 
+
+                    <>
+                        {
+                            filteredNotifs.map((notif) => (
+                                <CardNotifs key={notif._id} notification={notif} />
+                            ))
+                        }
+                    </>
+
+                    :
+
+                    <div className="col-span-full">
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                            <p className="text-red-600">No Notifications available.</p>
+                        </div>
+                    </div>
+
+                }
             </div>
         </div>
     );

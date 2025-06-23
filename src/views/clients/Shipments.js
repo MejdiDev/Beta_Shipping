@@ -1,133 +1,161 @@
 // filepath: src/views/clients/Shipments.js
+import getCard from "components/Cards/CardQuoteShip";
 import React, { useEffect, useState } from "react";
-import { getShipments } from "services/ApiShipment";
+import { getShipments } from "services/ApiClient";
 
 export default function Shipments() {
-  const [activeTab, setActiveTab] = useState("all");
-  const [shipments, setShipments] = useState([]);
+  const [ships, setShips] = useState([]);
+  const [query, setQuery] = useState("");
+
+  const [status, setStatus] = useState("");
+  const [mode, setMode] = useState("");
+  const [service, setService] = useState("");
+
+  const [shownShips, setShownShips] = useState([])
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    
+    setShownShips(
+      ships.filter(el => (
+        el._id.includes(query) &&
+        (status.length !== 0 ? el.status === status : true) &&
+        (mode.length !== 0 ? el.mode === mode : true) &&
+        (service.length !== 0 ? el.service === service : true)
+      ))
+    );
+  }
 
   useEffect(() => {
     getShipments()
       .then((response) => {
-        setShipments(response.shipments.slice(0, 5));
+        setShips(response);
+        setShownShips(response);
+
+        console.log("Shipments fetched successfully:", response);
       })
       .catch((error) => {
-        console.error("Error fetching quotes:", error);
+        console.error("Error fetching shipments:", error);
       });
-  }, [])
+  }, []);
+  
 
   return (
     <>
-      <div className="relative mr-4 mt-48   pr-5 w-full    ">
-          <div className="bg-blueGray-400 rounded-lg  shadow-lg border-3   ">
-            <h1 className="text-2xl text-emerald-500 mt-3 ml-2 font-bold mb-2">
-              My Shipment History 
-            </h1>
-            <p className="text-gray-600 mb-3 ml-2">
-              Track and manage your shipments .
-            </p>
+      <div className="flex flex-col items-center bg-gray rounded-lg pt-8">
+        <div className="mx-autp items-center flex flex-col justify-between md:flex-nowrap flex-wrap px-4" style={{ width: "1000px" }}>
+          <form onSubmit={ handleSubmit } className="md:flex hidden flex-row items-center lg:ml-auto w-full gap-6">
+            <div className="relative flex w-full flex-wrap items-stretch">
+              <span className="z-10 h-full leading-snug font-normal  text-center text-xl absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                <i className="fas fa-search"></i>
+              </span>
+              <input
+                type="text"
+                placeholder="Search by #ID"
+                className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+              
+                value={ query }
+                onChange={ e => setQuery(e.target.value) }
+              />
+            </div>
 
-            {/* Tabs Navigation */}
-            <div className="flex justify-center ml-3 mr-3">
-              <nav className="flex w-full max-w-2xl mx-auto rounded-lg overflow-hidden border-3 border-gray-200">
-                {[
-                  { tab: "all", label: "All Shipments" },
-                  { tab: "pending", label: "Pending" },
-                  { tab: "transit", label: "In Transit" },
-                  { tab: "delivered", label: "Delivered" }
-                ].map(({ tab, label }, idx, arr) => (
-                  <button
-                    type="button"
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none mb-4
-                    ${
-                      activeTab === tab
-                        ? "bg-white text-black border-b-2 border-blue-600 rounded-lg"
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 border-b-2 border-transparent"
-                    }
-                    ${idx === 0 ? "rounded-l-lg" : ""}
-                    ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
-                  `}
-                    style={{
-                      borderRight:
-                        idx < arr.length - 1 ? "1px solid #e5e7eb" : "none",
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
+            <button className="bg-lightBlue-500 text-white py-2 px-6 rounded shadow-md">Search</button>
+          </form>
+
+          <div className="w-full mt-3 flex gap-4">
+            <div className="flex-1">
+              <label className="block  text-sm font-medium text-gray-700 mb-1">
+                  Status
+              </label>
+
+              <select onChange={ e => {
+                setStatus(e.target.value)
+
+                setShownShips(
+                  ships.filter(el => (
+                    el._id.includes(query) &&
+                    (status.length !== 0 ? el.status === status : true) &&
+                    (mode.length !== 0 ? el.mode === mode : true) &&
+                    (service.length !== 0 ? el.service === service : true)
+                  ))
+                )
+              }} className="w-full rounded-lg">
+                <option value="requested">Requested</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="delivered">Delivered</option>
+                <option value="in transit">In Transit</option>
+              </select>
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mode
+              </label>
+
+              <select onChange={ e => {
+                setMode(e.target.value)
+
+                setShownShips(
+                  ships.filter(el => (
+                    el._id.includes(query) &&
+                    (status.length !== 0 ? el.status === status : true) &&
+                    (mode.length !== 0 ? el.mode === mode : true) &&
+                    (service.length !== 0 ? el.service === service : true)
+                  ))
+                )
+              } } className="w-full rounded-lg">
+                <option value="fcl">FCL</option>
+                <option value="lcl">LCL</option>
+                <option value="air">AIR</option>
+              </select>
             </div>
             
+            <div className="flex-1">
+              <label className="block  text-sm font-medium text-gray-700 mb-1">
+                  Incoterm
+              </label>
 
-            {activeTab === "all" && (
-              <div className="flex">
-                <div className="flex flex-col w-1/2   p-8">
-                  <div className="bg-blueGray-700rounded-lg p-8 shadow-lg border-3">
-                    <h2 className="text-xl font-semibold mb-4 text-blue-900">Your Recent Shipments</h2>
+              <select onChange={ e => {
+                setService(e.target.value)
 
-                    {
-                      shipments.map((shipment, idx) => (
-                <div
-                  key={shipment.id}
-                  className="bg-white border border-blue-200 rounded-lg mr-5 shadow p-4 mb-4 mt-1"
-                >
-                  <div className="flex justify-between rounded-lg items-center mb-1">
-                    <h3 className="text-md font-semibold text-blue-800">
-                      SH 00{idx + 1 || "N/A"}
-                    </h3>
-                    <span className="text-sm px-2 py-1 rounded bg-blue-200 text-blue-800 font-medium">
-                      {shipment.status || "Pending"}
-                    </span>
-                  </div>
-                  
-                  <div className="text-sm text-gray-700 my-2">
-                    <p className="font-medium">
-                      {shipment.origin || "Unknown Origin"} → {shipment.destination || "Unknown Destination"}
-                    </p>
-                    <p className="font-medium my-2">
-                      {shipment.destination}
-                    </p>
-                    <p className="font-medium my-2">
-                      {shipment.estimatedDeliveryDate}
-                    </p>
-                    
-                    
-                  </div>
+                setShownShips(
+                  ships.filter(el => (
+                    el._id.includes(query) &&
+                    (status.length !== 0 ? el.status === status : true) &&
+                    (mode.length !== 0 ? el.mode === mode : true) &&
+                    (service.length !== 0 ? el.service === service : true)
+                  ))
+                )
+              } } className="w-full rounded-lg">
+                <option value="FOB">FOB</option>
+                <option value="CIF">CIF</option>
+                <option value="EXW">EXW</option>
+                <option value="DDP">DDP</option>
+                <option value="DDU">DDU</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
+        <div className="px-3 w-full flex justify-center mt-8">
+          <div style={{ width: "1000px" }}>
+            {shownShips.length > 0 ? (
+              shownShips.map((shipment, index) =>
+                <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-8">
+                  { getCard({ quote: shipment, index }) }
                 </div>
-
-
-
-                ))}
-                     
-                    
-                
-                 
-                </div>
-                </div>
-
-                <div className="flex flex-col w-1/2   p-8">
-                  <div className="bg-blueGray-700rounded-lg p-8 shadow-lg border-3">
-                    <h2 className="text-xl font-semibold mb-4 text-blue-900">Your Recent Quotes</h2>
-
-                    
-
-                    
-                  </div>
+              )
+            ) : (
+              <div className="col-span-full">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                  <p className="text-red-600">No shipments available.</p>
                 </div>
               </div>
             )}
-            
-            {activeTab === "pending" && (<></>)}
-
-            {activeTab === "transit" && (<></>)}
-            
-            {activeTab === "delivered" && (<></>)}
           </div>
-
         </div>
+      </div>
     </>
   );
 }

@@ -14,6 +14,7 @@ import ClientsPage from "views/salesAgents/ClientsPage";
 import salesAgentRoutes from "../components/Navbars/navRoutes/salesAgent.json";
 import SalesAgentNotifs from "views/salesAgents/SalesAgentNotifs";
 import SalesAgentOffer from "views/salesAgents/SalesAgentOffer";
+import SalesAgentQuoteList from "views/salesAgents/SalesAgentQuoteList";
 
 
 export default function SalesAgent() {
@@ -30,7 +31,10 @@ export default function SalesAgent() {
         className="mx-auto w-full -m-24 py-8 pt-0">
           <Switch>
             <Route path="/salesAgent/" exact component={SalesAgentDashboard} />
-            <Route path="/salesAgent/offer/:id" exact component={SalesAgentOffer} />
+
+            <Route path="/salesAgent/quotes" exact component={SalesAgentQuoteList} />
+            <Route path="/salesAgent/quote/:id" exact component={SalesAgentOffer} />
+
             <Route path="/salesAgent/notifications" exact component={SalesAgentNotifs} />
             
             <Route path="/salesAgent/leads" exact component={LeadsPage} />

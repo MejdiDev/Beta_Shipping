@@ -2,25 +2,34 @@ import AIRCard from "views/clients/quoteCard/AIRCard";
 import FCLCard from "views/clients/quoteCard/FCLCard";
 import LCLCard from "views/clients/quoteCard/LCLCard";
 
-const getCard = ({ quote, index}) => {
+const getCard = ({ quote, index, min, to }) => {
     switch(quote.mode) {
         case "fcl":
-        return <FCLCard
-            quote={ quote }
-            index= { index }
-        />
+            return <FCLCard
+                quote={ quote }
+                index= { index }
+
+                to={ to }
+                min={ min }
+            />
 
         case "lcl":
-        return <LCLCard
-            quote={ quote }
-            index= { index }
-        />
+            return <LCLCard
+                quote={ quote }
+                index= { index }
+
+                to={ to }
+                min={ min }
+            />
 
         case "air":
-        return <AIRCard
-            quote={ quote }
-            index= { index }
-        />
+            return <AIRCard
+                quote={ quote }
+                index= { index }
+
+                to={ to }
+                min={ min }
+            />
     }
 }
 
