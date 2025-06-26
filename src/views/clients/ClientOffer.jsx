@@ -5,6 +5,11 @@ import { capitalizeWords } from "services/ApiQuote";
 import { formatDate } from "services/ApiQuote";
 import { GetOfferById } from "services/ApiClient";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import FCLOffer from "components/offerCards/FCLOffer";
+import LCLOffer from "components/offerCards/LCLOffer";
+import AIROffer from "components/offerCards/AIROffer";
+import { toastSucc } from "services/ApiAll";
+import { toastErr } from "services/ApiAll";
 
 const ClientOffer = () => {
     const [offer, setOffer] = useState('');
@@ -17,7 +22,7 @@ const ClientOffer = () => {
         
     };
 
-    useEffect(() => {
+    const getOfferData = () => {
         GetOfferById(id)
             .then((response) => {
                 setOffer({ ...response.quoteId, amount: response.amount, offerId: response._id, result: response.result });
@@ -25,15 +30,24 @@ const ClientOffer = () => {
             .catch((error) => {
                 console.error("Error fetching offers:", error);
             });
+    }
+
+    useEffect(() => {
+        getOfferData()
     }, [])
 
     const acceptOffer = () => {
         AcceptOffer(offer)
             .then((response) => {
                 console.log(response);
+
+                getOfferData();
+                toastSucc(response.message);
             })
             .catch((error) => {
                 console.error("Error fetching offers:", error);
+
+                toastErr(error.message);
             });
     }
 
@@ -44,70 +58,29 @@ const ClientOffer = () => {
                 <div className="mb-6 p-6 border rounded-xl shadow-md bg-white w-full">
                     <h2 className="text-2xl font-bold mb-4">Offer Details</h2>
 
-                    <div className="flex">
-                        <div className="flex flex-col flex-1">
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Origin: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.origin }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Destination: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.destination }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Weight: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.weight } Kg</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Volume: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.volume } m³</p>
-                            </div>
-                            
-                            {
-                                offer.dimensions &&
-
-                                <div className="flex items-center gap-4">
-                                    <label className="text-md text-gray-500">Dimensions (HxWxL in meters): </label>
-                                    <p className="text-lg font-semibold text-gray-700">{`${offer.dimensions.height} x ${offer.dimensions.width} x ${offer.dimensions.length}`}</p>
-                                </div>
-                            }
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Container Type: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.containerType && offer.containerType.toUpperCase() }</p>
-                            </div>
-                        </div>
+                    {
+                        offer.shipmentType === 'fcl' &&
                         
-                        <div className="flex flex-col flex-1">
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Incoterm: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.incoterm && offer.incoterm.toUpperCase() }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Mode: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ capitalizeWords(offer.mode) }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Service Level: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ capitalizeWords(offer.serviceLevel) }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Requested Delivery: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.reqDelivery && formatDate(offer.reqDelivery) }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Ready Date: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ offer.readyDate && formatDate(offer.readyDate) }</p>
-                            </div>
-                        </div>
-                    </div>
+                        <FCLOffer
+                            quote={ offer.detailsId }
+                        />
+                    }
+
+                    {
+                        offer.shipmentType === 'lcl' &&
+                        
+                        <LCLOffer
+                            quote={ offer.detailsId }
+                        />
+                    }
+
+                    {
+                        offer.shipmentType === 'air' &&
+                        
+                        <AIROffer
+                            quote={ offer.detailsId }
+                        />
+                    }
                 </div>
 
                 {/* Bottom Section: Accept or Decline */}

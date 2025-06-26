@@ -11,10 +11,12 @@ import { AddTask } from "services/ApiSalesAgent";
 import { DeleteTask } from "services/ApiSalesAgent";
 import { EditTask } from "services/ApiSalesAgent";
 
-import { EditClient } from "services/ApiSalesAgent";
-import { AddClient } from "services/ApiSalesAgent";
+import { EditClient } from "services/ApiAdmin";
+import { AddClient } from "services/ApiAdmin";
 
 import EditClientTab from "./ClientTabs/EditClientTab";
+import { DeleteClient } from "services/ApiAdmin";
+import { toastSucc } from "services/ApiAll";
 
 
 export default function CardTable({ model, leads, getData, fields, editable=false }) {
@@ -72,9 +74,13 @@ export default function CardTable({ model, leads, getData, fields, editable=fals
           tab && tab.includes("del_") &&
           <DelTab
             handleClose={ handleClose }
-            DeleteLead={ tab === "del_lead" ? DeleteLead : DeleteTask }
+            DeleteLead={ tab === "del_lead" ? DeleteLead : ( tab === "del_task" ? DeleteTask : DeleteClient ) }
 
-            getData={ getData }
+            getData={ () => {
+              getData()
+
+              toastSucc(capitalizeWords(model) + " Deleted Successfully !");
+            } }
 
             focusId={ focusId }
             setFocusId={ setFocusId }
@@ -88,7 +94,11 @@ export default function CardTable({ model, leads, getData, fields, editable=fals
 
             EditLead={ tab === "edit_lead" ? EditLead : AddLead }
 
-            getData={ getData }
+            getData={ () => {
+              getData()
+
+              toastSucc(`Lead ${ tab === "edit_lead" ? "edited" : "added" } Successfully !`);
+            } }
             
             setFocusId={ setFocusId }
 
@@ -104,7 +114,11 @@ export default function CardTable({ model, leads, getData, fields, editable=fals
 
             EditLead={ tab === "edit_task" ? EditTask : AddTask }
 
-            getData={ getData }
+            getData={ () => {
+              getData()
+
+              toastSucc(`Task ${ tab === "edit_task" ? "edited" : "added" } Successfully !`);
+            } }
             
             setFocusId={ setFocusId }
 
@@ -114,13 +128,17 @@ export default function CardTable({ model, leads, getData, fields, editable=fals
         }
 
         {
-          ( tab === "add_client" || tab === "edit_client" ) &&
+          ( tab === "add_user" || tab === "edit_user" ) &&
           <EditClientTab
             handleClose={ handleClose }
 
-            EditLead={ tab === "edit_task" ? EditClient : AddClient }
+            EditLead={ tab === "edit_user" ? EditClient : AddClient }
 
-            getData={ getData }
+            getData={ () => {
+              getData()
+
+              toastSucc(`User ${ tab === "edit_user" ? "edited" : "added" } Successfully !`);
+            } }
             
             setFocusId={ setFocusId }
 

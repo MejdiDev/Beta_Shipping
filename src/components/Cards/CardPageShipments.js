@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import { toastErr } from "services/ApiAll";
 import { getShipments } from "services/ApiOperationalOfficer";
 import { formatDate } from "services/ApiQuote";
+import { formatShips } from "views/opAgent/OpAgentShipments";
 
 export default function CardPageShipments() {
   const [ships, setShips] = useState([])
 
   useEffect(() => {
       getShipments()
-        .then(response => setShips(response))
+        .then(response => {
+          const resShips = formatShips(response)
+          setShips(resShips)
+        })
         .catch((error) => {
           console.error("Error requesting shipments:", error);
-          alert("Failed to request shipments. Please try again.");
+          toastErr("Failed to request shipments. Please try again.");
         });
   }, [])
 
@@ -69,15 +74,15 @@ export default function CardPageShipments() {
                 ships.map((ship, index) => (
                   <tr key={index}>
                     <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-                      { ship.origin }
+                      { ship.shipmentType !== "air" ? ship.originPort : ship.originAirport }
                     </th>
 
                     <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      { ship.destination }
+                      { ship.shipmentType !== "air" ? ship.destinationPort : ship.destinationAirport }
                     </td>
 
                     <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      { ship.mode && ship.mode.toUpperCase() }
+                      { ship.shipmentType && ship.shipmentType.toUpperCase() }
                     </td>
 
                     <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -85,7 +90,7 @@ export default function CardPageShipments() {
                     </td>
 
                     <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      { formatDate(ship.readyDate) }
+                      { ship.readyDate && formatDate(ship.readyDate) }
                     </td>
                   </tr>
                 ))

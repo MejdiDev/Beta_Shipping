@@ -1,6 +1,8 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 
+import  { Toaster } from 'react-hot-toast';
+
 import opOfficerRoutes from "../components/Navbars/navRoutes/opOfficerRoutes.json";
 
 // components
@@ -16,6 +18,8 @@ import OpAgentTasks from "views/opAgent/OpAgentTasks";
 export default function OpAgent() {
   return (
     <>
+      <Toaster />
+
       <Navbar
         routes={ opOfficerRoutes }
       />

@@ -133,39 +133,6 @@ export async function getClients() {
   }
 }
 
-export async function AddClient(formData) {
-  try {
-    const response = await axios.post(`${apiUrl}/clients`, { ...formData, assignedBy: localStorage.getItem('userId') }, {
-      withCredentials: true, // Include cookies in the request
-    })
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Network error, please try again" };
-  }
-}
-
-export async function DeleteClient(id) {
-  try {
-    const response = await axios.delete(`${apiUrl}/clients/${id}`, {
-      withCredentials: true, // Include cookies in the request
-    })
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Network error, please try again" };
-  }
-}
-
-export async function EditClient(formData) {
-  try {
-    const response = await axios.put(`${apiUrl}/clients/${formData._id}`, formData, {
-      withCredentials: true
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Network error, please try again" };
-  }
-}
-
 //Leads
 
 export async function getAgentLeads() {

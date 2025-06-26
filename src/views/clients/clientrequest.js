@@ -5,112 +5,131 @@ import { requestQuote } from "services/ApiQuote";
 import FCLTab from "./requestTabs/FCLTab";
 import LCLTab from "./requestTabs/LCLTab";
 import AIRTab from "./requestTabs/AIRTab";
+import { toastSucc } from "services/ApiAll";
+import { toastErr } from "services/ApiAll";
 
-export default function ClientRequest() {
-  const [activeTab, setActiveTab] = useState("FCL");
-
-  const [formData, setFormData] = useState({
-    origin: "",
-    destination:"",
-    mode: "",
+export const initFormData = {
+  'fcl': {
     readyDate: "",
-    reqDelivery: "",
-    incoterm: "",
-    containerType:"",
 
+    originPort: "",
+    destinationPort: "",
+
+    containerQuantity: "",
+    goodsDescription: "",
+
+    dangerous: false,
+
+    incoterm: '',
+    containerType: ''
+  },
+
+  'lcl': {
+    readyDate: "",
+
+    originPort: "",
+    destinationPort: "",
+
+    cargoDescription: "",
+    packageType: "",
+    totalPackages: "",
+
+    weight: "",
     length: "",
+    
     width: "",
     height: "",
 
-    volume: "",
+    incoterm: ''
+  },
+
+  'air': {
+    readyDate: "",
+
+    originAirport: "",
+    destinationAirport: "",
+
+    cargoDescription: "",
+    numberOfPieces: "",
+
     weight: "",
-    serviceLevel: "",
-  });
+    volume: "",
 
+    incoterm: ''
+  }
+}
+
+export const validateForm = ({ formData, activeTab }) => {
+    console.log(formData[ activeTab.toLowerCase() ])
+    let isValid = true;
+    const currentFormData = formData[ activeTab.toLowerCase() ];
     
+    Object.keys(currentFormData).forEach((fieldName) => {
+      const fieldValue = currentFormData[fieldName];
+      
+      const isFieldEmpty = fieldValue === null || fieldValue === "" || (typeof fieldValue === "number" && fieldValue === 0);
+      
+      const exceptions = [];
+      const shouldSkip = exceptions.includes(fieldName);
+      
+      if (isFieldEmpty && !shouldSkip) {
+        const inputElement = document.querySelector(`[name="${fieldName}"]`);
+        console.log(inputElement)
 
-  const handleChange = (e) => {
+        if (inputElement) {
+          inputElement.classList.add('border-red');
+        }
+
+        isValid = false;
+
+      } else {
+        const inputElement = document.querySelector(`[name="${fieldName}"]`);
+
+        if (inputElement) {
+          inputElement.classList.remove('border-red');
+        }
+      }
+    });
+
+    return isValid;
+  };
+
+export default function ClientRequest() {
+  const [activeTab, setActiveTab] = useState("FCL");
+  const [formData, setFormData] = useState( initFormData );
+
+  const handleChange = (e, mode) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [mode]: {
+        ...formData[mode],
+        [name]: value,
+      },
     }));
-  };
-
-  const allValuesNotEmpty = (obj) => {
-    return Object.values(obj).every(
-      (value) =>
-        value !== null && value !== undefined && value !== "" && value !== 0
-    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (allValuesNotEmpty({ ...formData, mode: activeTab })) {
-      requestQuote({ ...formData, mode: activeTab })
-        .then((response) => {
-          alert("Quote requested successfully!");
-          
+    if(!validateForm({ formData, activeTab })) return
 
-          setFormData({
-            origin: "",
-            destination:"",
-            readyDate: "",
-            reqDelivery: "",
-            incoterm: "",
-            containerType: "",
-            serviceLevel: "",
+    requestQuote(activeTab, formData[activeTab.toLocaleLowerCase()])
+      .then((response) => {
+        toastSucc(response.message);
+        setFormData(initFormData);
+      })
+      .catch((error) => {
+        console.error("Error requesting quote:", error);
 
-            length: "",
-            width: "",
-            height: "",
-
-            volume: "",
-            weight: "",
-          });
-        })
-        .catch((error) => {
-          console.error("Error requesting quote:", error);
-          alert("Failed to request quote. Please try again.");
-        });
-    }
-  };
-
-  const exQuote = {
-    origin: 'New York',
-    destination: 'Los Angeles',
-    weight: 1200,
-    volume: 250,
-
-    height: 2,
-    width: 2,
-    length: 3,
-
-    containerType: '40ft',
-    incoterm: 'fob',
-    mode: 'road',
-    serviceLevel: 'express',
-    reqDelivery: new Date('2025-07-10'),
-    readyDate: new Date('2025-07-05')
+        toastErr("Failed to request quote. Please try again.");
+      });
   };
 
   return (
     <>
-      <button onClick={() => {
-        requestQuote(exQuote)
-          .then((response) => {
-              console.log(response);
-          })
-          .catch((error) => {
-              console.error("Error fetching Notifications:", error);
-          });
-      }}>
-        SEND TEST
-      </button>
-
-      <form onSubmit={ handleSubmit } className="px-4 md:px-10">
+      <form onSubmit={ handleSubmit } className="px-4 md:px-10 py-8">
         <div className="flex justify-center relative mr-4 pr-5 w-full">
           <div className="flex flex-col items-center max-w-800-px bg-white rounded-lg border-3 p-5" style={{ minWidth: "800px" }}>
             <h1 className="text-5xl text-lightBlue-500 mt-3 text-center font-bold mb-2">
@@ -160,22 +179,22 @@ export default function ClientRequest() {
             
             {activeTab === "FCL" &&
               <FCLTab
-                formData={ formData }
-                handleChange={ handleChange }
+                formData={ formData['fcl'] }
+                handleChange={ e => handleChange(e, 'fcl') }
               />
             }
             
             {activeTab === "LCL" &&
               <LCLTab
-                formData={ formData }
-                handleChange={ handleChange }
+                formData={ formData['lcl'] }
+                handleChange={ e => handleChange(e, 'lcl') }
               />
             }
             
             {activeTab === "AIR" &&
               <AIRTab
-                formData={ formData }
-                handleChange={ handleChange }
+                formData={ formData['air'] }
+                handleChange={ e => handleChange(e, 'air') }
               />
             }
 

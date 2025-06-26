@@ -15,12 +15,12 @@ const AIRTab = ({ formData, handleChange }) => {
                             Origin
                         </label>
                         <input
-                            name="origin"
+                            name="originAirport"
                             type="text"
                             placeholder="Enter Origin Airport"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 
-                            value={ formData.origin }
+                            value={ formData.originAirport }
                             onChange={ handleChange }
                         />
                     </div>
@@ -30,12 +30,12 @@ const AIRTab = ({ formData, handleChange }) => {
                             Destination
                         </label>
                         <input
-                            name="destination"
+                            name="destinationAirport"
                             type="text"
                             placeholder="Enter Destination Airport"
                             className="mt-1 block w-full  rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
 
-                            value={ formData.destination }
+                            value={ formData.destinationAirport }
                             onChange={ handleChange }
                         />
                     </div>
@@ -81,13 +81,13 @@ const AIRTab = ({ formData, handleChange }) => {
                     <div className="flex items-center w-full flex-1 bg-gray p-2 rounded-lg ml-2">
                         <div className="flex-1">
                             <input
-                                name="numPieces"
+                                name="numberOfPieces"
                                 type="number"
                                 min={0}
                                 placeholder="Number Of Pieces"
                                 className="mt-1 border-transparent bg-transparent shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full text-center"
 
-                                value={ formData.volume }
+                                value={ formData.numberOfPieces }
                                 onChange={ handleChange }
                             />
                         </div>
@@ -130,11 +130,11 @@ const AIRTab = ({ formData, handleChange }) => {
                             value={ formData.incoterm }
                             onChange={ handleChange }
                         >
-                            <option value="FOB">FOB</option>
-                            <option value="CIF">CIF</option>
-                            <option value="EXW">EXW</option>
-                            <option value="DDP">DDP</option>
-                            <option value="DDU">DDU</option>
+                            <option value="">Select Incoterm</option>
+                            
+                            <option value="fob">FOB</option>
+                            <option value="fca">FCA</option>
+                            <option value="exwork">EXWORK</option>
                         </select>
                     </div>
 
@@ -173,6 +173,24 @@ const AIRTab = ({ formData, handleChange }) => {
                     </div> */}
                 </div>
 
+                <div className="flex-1 mt-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Ready Date
+                    </label>
+
+                    <input
+                        name="readyDate"
+                        type="date"
+                        placeholder="Pick a date"
+                        className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
+
+                        value={ formData.readyDate }
+                        onChange={ handleChange }
+                        
+                        style={{ border: "1px #71717a solid", padding: "0.5rem 0.75rem" }}
+                    />
+                </div>
+
                 <div className="border-t border-gray-300 my-4 w-full flex w-full flex-1 mt-5 pt-4">
                     <div className="flex-1 mr-3">
                         <label className="block text-sm font-medium text-gray-700">
@@ -180,12 +198,12 @@ const AIRTab = ({ formData, handleChange }) => {
                         </label>
 
                         <textarea
-                            name="readyDate"
+                            name="cargoDescription"
                             type="date"
                             placeholder="Write A Description"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 
-                            value={ formData.readyDate }
+                            value={ formData.cargoDescription }
                             onChange={ handleChange }
                             
                             style={{ height: "150px", border: "1px #71717a solid", padding: "0.5rem 0.75rem" }}

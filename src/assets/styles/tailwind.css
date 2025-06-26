@@ -1451,6 +1451,12 @@ select {
   border-bottom-width: 1px;
 }
 
+.border-red {
+  border: solid !important;
+  border-width: 2px !important;
+  border-color: #f44336 !important;
+}
+
 .border-b-2 {
   border-bottom-width: 2px;
 }

@@ -2,18 +2,24 @@ import CardPageShipments from "components/Cards/CardPageShipments";
 import CardTasksOpAgent from "components/Cards/CardTasksOpAgent";
 import HeaderStats from "components/Headers/HeaderStats";
 import { useEffect, useState } from "react";
-import { getShipments } from "services/ApiOperationalOfficer";
+import { toastErr } from "services/ApiAll";
+import { getQuotes } from "services/ApiOperationalOfficer";
 
 const OpAgentDashboard = () => {
     const [quotes, setQuotes] = useState([])
     
     useEffect(() => {
-        getShipments()
+        getQuotes()
             .then((response) => {
-                setQuotes(response);
+                setQuotes(
+                    response.map(el => {
+                        return { status: el.status }
+                    })
+                );
             })
             .catch((error) => {
                 console.error("Error fetching quotes:", error);
+                toastErr(error.message)
             });
     }, [])
 
@@ -22,7 +28,7 @@ const OpAgentDashboard = () => {
             <div className="relative bg-blueGray-100">
                 <HeaderStats
                     stats={[
-                        { bg: "#3fccc1", num: quotes.filter(el => el.status === "active").length, title: "Active", icon: "fa fa-file"},
+                        { bg: "#3fccc1", num: quotes.filter(el => el.status === "pending").length, title: "Pending", icon: "fa fa-file"},
                         { bg: "#fe9a3b", num: quotes.filter(el => el.status === "accepted").length, title: "Accepted", icon: "fa fa-check"},
                         { bg: "#374658", num: quotes.filter(el => el.status === "delivered").length, title: "Delivered", icon: "fa fa-box"},
                         { bg: "#f44336", num: quotes.filter(el => el.status === "rejected").length, title: "Rejected", icon: "fa fa-times"}

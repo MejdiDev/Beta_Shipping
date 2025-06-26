@@ -1,6 +1,7 @@
 // filepath: src/views/clients/Shipments.js
 import getCard from "components/Cards/CardQuoteShip";
 import React, { useEffect, useState } from "react";
+import { toastErr } from "services/ApiAll";
 import { getShipments } from "services/ApiClient";
 
 export default function Shipments() {
@@ -29,13 +30,18 @@ export default function Shipments() {
   useEffect(() => {
     getShipments()
       .then((response) => {
-        setShips(response);
-        setShownShips(response);
+        const resShips = response.map(el => {
+          return { ...el.quoteRequestId.detailsId, shipmentType: el.quoteRequestId.shipmentType, status: el.status }
+        })
 
-        console.log("Shipments fetched successfully:", response);
+        setShips(resShips);
+        setShownShips(resShips);
+
+        console.log("Shipments fetched successfully:", resShips);
       })
       .catch((error) => {
         console.error("Error fetching shipments:", error);
+        toastErr(error.message)
       });
   }, []);
   

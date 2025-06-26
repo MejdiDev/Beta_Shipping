@@ -15,21 +15,21 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                     <i className="fa fa-ship text-lightBlue-500 text-4xl mr-3" aria-hidden="true"></i>
 
                     <div className="flex w-full">
-                    <div className="mr-3 ml-3">
-                        <p className="text-xs text-gray-500">From</p>
-                        <h4 className="text-md font-semibold text-gray-700">
-                        {quote.origin || "N/A"}
-                        </h4>
-                    </div>
+                        <div className="mr-3 ml-3">
+                            <p className="text-xs text-gray-500">From</p>
+                            <h4 className="text-md font-semibold text-gray-700">
+                                {quote.originPort || "N/A"}
+                            </h4>
+                        </div>
 
-                    <img className="ml-3 mr-3" src="./arrow.png" alt="Arrow" style={{ height: "50px" }} />
+                        <img className="ml-3 mr-3" src="./arrow.png" alt="Arrow" style={{ height: "50px" }} />
 
-                    <div className="ml-3">
-                        <p className="text-xs text-gray-500">To</p>
-                        <h4 className="text-md font-semibold text-gray-700">
-                        {quote.destination || "N/A"}
-                        </h4>
-                    </div>
+                        <div className="ml-3">
+                            <p className="text-xs text-gray-500">To</p>
+                            <h4 className="text-md font-semibold text-gray-700">
+                                {quote.destinationPort || "N/A"}
+                            </h4>
+                        </div>
                     </div>
                 </div>
 
@@ -38,7 +38,7 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                 <div>
                     <p className="text-xs text-gray-500">Container</p>
                     <h4 className="text-md font-semibold text-gray-700">
-                        { quote.containerType ? capitalizeWords(quote.containerType) : "N/A" }
+                        { quote.containerType ? quote.containerType.toUpperCase() : "N/A" }
                     </h4>
                 </div>
 
@@ -66,7 +66,7 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                             <div>
                                 <p className="text-xs text-gray-500">Mode</p>
                                 <h4 className="text-md font-semibold text-gray-700">
-                                {quote.mode.toUpperCase() || "N/A"}
+                                    {quote.shipmentType.toUpperCase() || "N/A"}
                                 </h4>
                             </div>
 
@@ -77,7 +77,7 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                     <div>
                         <p className="text-xs text-gray-500">Container</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        { quote.containerType ? capitalizeWords(quote.containerType) : "N/A" }
+                        { quote.containerType ? quote.containerType.toUpperCase() : "N/A" }
                         </h4>
                     </div>
                     
@@ -95,7 +95,7 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                     <div>
                         <p className="text-xs text-gray-500">Incoterm</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        {quote.incoterm ? `${quote.incoterm}` : "N/A"}
+                        {quote.incoterm ? `${ quote.incoterm.toUpperCase() }` : "N/A"}
                         </h4>
                     </div>
                 </div>

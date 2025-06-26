@@ -21,7 +21,7 @@ export default function Clientquotes() {
       quotes.filter(el => (
         el._id.includes(query) &&
         (status.length !== 0 ? el.status === status : true) &&
-        (mode.length !== 0 ? el.mode === mode : true) &&
+        (mode.length !== 0 ? el.shipmentType === mode : true) &&
         (service.length !== 0 ? el.service === service : true)
       ))
     );
@@ -30,10 +30,14 @@ export default function Clientquotes() {
   useEffect(() => {
     getClientQuotes()
       .then((response) => {
-        setQuotes(response);
-        setShownQuotes(response);
+        const resQuotes = response.map(el => {
+          return { ...el.detailsId, shipmentType: el.shipmentType, status: el.status }
+        })
 
-        console.log("Quotes fetched successfully:", response);
+        setQuotes(resQuotes);
+        setShownQuotes(resQuotes);
+
+        console.log("Quotes fetched successfully:", resQuotes);
       })
       .catch((error) => {
         console.error("Error fetching quotes:", error);
@@ -76,22 +80,23 @@ export default function Clientquotes() {
                   quotes.filter(el => (
                     el._id.includes(query) &&
                     (status.length !== 0 ? el.status === status : true) &&
-                    (mode.length !== 0 ? el.mode === mode : true) &&
+                    (mode.length !== 0 ? el.shipmentType === mode : true) &&
                     (service.length !== 0 ? el.service === service : true)
                   ))
                 )
               }} className="w-full rounded-lg">
-                <option value="requested">Requested</option>
-                <option value="approved">Approved</option>
+
+                <option value="pending">Pending</option>
+                <option value="under review">Under Review</option>
+                <option value="quoted">Quoted</option>
+                <option value="accepted">Accepted</option>
                 <option value="rejected">Rejected</option>
-                <option value="delivered">Delivered</option>
-                <option value="in transit">In Transit</option>
               </select>
             </div>
 
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mode
+                Shipment Type
               </label>
 
               <select onChange={ e => {
@@ -101,7 +106,7 @@ export default function Clientquotes() {
                   quotes.filter(el => (
                     el._id.includes(query) &&
                     (status.length !== 0 ? el.status === status : true) &&
-                    (mode.length !== 0 ? el.mode === mode : true) &&
+                    (mode.length !== 0 ? el.shipmentType === mode : true) &&
                     (service.length !== 0 ? el.service === service : true)
                   ))
                 )
@@ -124,16 +129,14 @@ export default function Clientquotes() {
                   quotes.filter(el => (
                     el._id.includes(query) &&
                     (status.length !== 0 ? el.status === status : true) &&
-                    (mode.length !== 0 ? el.mode === mode : true) &&
+                    (mode.length !== 0 ? el.shipmentType === mode : true) &&
                     (service.length !== 0 ? el.service === service : true)
                   ))
                 )
               } } className="w-full rounded-lg">
-                <option value="FOB">FOB</option>
-                <option value="CIF">CIF</option>
-                <option value="EXW">EXW</option>
-                <option value="DDP">DDP</option>
-                <option value="DDU">DDU</option>
+                <option value="fob">FOB</option>
+                <option value="fca">FCA</option>
+                <option value="exwork">EXWORK</option>
               </select>
             </div>
           </div>

@@ -64,7 +64,7 @@ const AIRCard = ({ quote, index, min=false, to  }) => {
                             <div>
                                 <p className="text-xs text-gray-500">Mode</p>
                                 <h4 className="text-md font-semibold text-gray-700">
-                                {quote.mode.toUpperCase() || "N/A"}
+                                    { quote.shipmentType ? quote.shipmentType.toUpperCase() : "N/A" }
                                 </h4>
                             </div>
 
@@ -93,7 +93,7 @@ const AIRCard = ({ quote, index, min=false, to  }) => {
                     <div>
                         <p className="text-xs text-gray-500">Incoterm</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        {quote.incoterm ? `${quote.incoterm}` : "N/A"}
+                            { quote.incoterm ? quote.incoterm.toUpperCase() : "N/A" }
                         </h4>
                     </div>
                 </div>

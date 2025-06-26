@@ -1,6 +1,35 @@
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 const apiUrl = "http://localhost:5000";
+
+// Toast
+
+export const toastSucc = msg => {
+  toast.success(msg, {
+    style: {
+        border: '2px solid #021E3D',
+        borderRadius: '10px',
+        background: '#01152B',
+        color: '#fff',
+    },
+    
+    iconTheme: {
+      primary: '#0A7CFF',
+      secondary: '#FFFAEE',
+    },
+  })
+}
+
+export const toastErr = msg => {
+  toast.error(msg, {
+      style: {
+          borderRadius: '10px',
+          background: '#333',
+          color: '#fff',
+      },
+  })
+}
 
 // Notifications
 

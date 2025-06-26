@@ -16,7 +16,7 @@ const EditClientTab = ({ formData={ title: "", assignedTo: "", priority: "", sta
                     </div>
                 )} */}
 
-                <div className="flex gap-4 mb-4">
+                <div className="flex gap-4">
                     {/* First Name Input */}
                     <div className="flex-1">
                         <label className="text-sky-blue text-sm font-bold mt-2" htmlFor="name">
@@ -78,6 +78,28 @@ const EditClientTab = ({ formData={ title: "", assignedTo: "", priority: "", sta
                         className="mt-1 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
                         placeholder="Phone Number"
                     />
+                </div>
+
+                {/* Role Select */}
+                <div>
+                    <label className="block uppercase text-sky-blue text-xs font-bold mt-2" htmlFor="phone">
+                        Role
+                    </label>
+                    <select
+                        id="status"
+                        name="status"
+                        className="mt-1 block w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                        required
+
+                        value={ formData.role }
+                        onChange={ e => setFormData({ ...formData, role: e.target.value }) }
+                    >
+                        <option value="client">Client</option>
+                        <option value="salesAgent">Sales Agent</option>
+                        <option value="operationalOfficer">Operational Officer</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                    </select>
                 </div>
             </form>
 

@@ -7,38 +7,18 @@ import { uploadDocument } from "services/ApiOpOfficer";
 import FCLTab from "views/clients/requestTabs/FCLTab";
 import LCLTab from "views/clients/requestTabs/LCLTab";
 import AIRTab from "views/clients/requestTabs/AIRTab";
+import { toastErr } from "services/ApiAll";
+import { initFormData } from "views/clients/clientrequest";
+import { validateForm } from "views/clients/clientrequest";
+import { addShipment } from "services/ApiOperationalOfficer";
+import { toastSucc } from "services/ApiAll";
+import { getClients } from "services/ApiOperationalOfficer";
 
-const emptyQuote = {
-  "userId": "",
-  "origin": "",
-  "destination": "",
-  "weight": "",
-  "volume": "",
-  "dimensions": {
-    "height": "",
-    "width": "",
-    "length": ""
-  },
-  "incoterm": "",
-  "mode": "",
-  "status": "active",
-  "serviceLevel": "",
-  "reqDelivery": {
-    "$date": {
-      "$numberLong": ""
-    }
-  },
-  "readyDate": {
-    "$date": {
-      "$numberLong": ""
-    }
-  },
-  "createdAt": {
-    "$date": {
-      "$numberLong": ""
-    }
-  },
-  "__v": ""
+export const formatShips = response => {
+    return response.shipments.map(el => {
+        if(el.quoteRequestId) return { ...el.quoteRequestId.detailsId, shipmentType: el.quoteRequestId.shipmentType, status: el.status, clientId: el.clientId }
+        else if(el.detailsId) return { ...el.detailsId, shipmentType: el.shipmentType, status: el.status, clientId: el.clientId }
+    })
 }
 
 const docTypeOpt = [
@@ -99,6 +79,8 @@ export const FileUpload = ({ setUpFile }) => {
 
 const OpAgentShipments = () => {
     const [ships, setShips] = useState([]);
+    const [clients, setClients] = useState([]);
+
     const [shownShips, setShownShips] = useState([]);
 
     const [focusShip, setFocusShip] = useState();
@@ -113,6 +95,20 @@ const OpAgentShipments = () => {
 
     const [floatingTab, setFloatingTab] = useState();
     const [activeTab, setActiveTab] = useState("FCL");
+
+    const [formData, setFormData] = useState(initFormData);
+
+    const handleChange = (e, mode) => {
+        const { name, value } = e.target;
+
+        setFormData((prev) => ({
+        ...prev,
+        [mode]: {
+            ...formData[mode],
+            [name]: value,
+        },
+        }));
+    };
 
     const handleClose = () => {
         setFocusShip();
@@ -131,29 +127,57 @@ const OpAgentShipments = () => {
 
         const formData = new FormData();
         formData.append('shipmentId', focusShip._id);
-        formData.append('clientId', focusShip.userId);
+        formData.append('clientId', focusShip.clientId);
         formData.append('documentType', docData.documentType);
         formData.append('document', upFile);
 
         uploadDocument(formData)
             .then((response) => {
                 if(response.document) {
-                    handleClose()
+                    toastSucc(response.message);
+                    handleClose();
                 }
             })
             .catch((error) => {
                 console.error("Error fetching shipments:", error);
+                toastErr(error.message);
+            });
+    }
+
+    const handleAddShip = () => {
+        if(!validateForm({ formData, activeTab })) return
+
+        addShipment({ shipDetails: formData[ activeTab.toLowerCase() ], shipmentType: activeTab })
+            .then((response) => {
+                toastSucc(response.message)
+                handleClose()
+            })
+            .catch((error) => {
+                console.error("Error adding shipment:", error);
+                toastErr(error.message)
             });
     }
 
     useEffect(() => {
         getShipments()
             .then((response) => {
-                setShips(response);
-                setShownShips(response);
+                const resShips = formatShips(response)
+                
+                setShips(resShips)
+                setShownShips(resShips);
             })
             .catch((error) => {
                 console.error("Error fetching shipments:", error);
+                toastErr(error.message)
+            });
+
+        getClients()
+            .then((response) => {
+                setClients(response)
+            })
+            .catch((error) => {
+                console.error("Error fetching shipments:", error);
+                toastErr(error.message)
             });
     }, [])
 
@@ -175,71 +199,109 @@ const OpAgentShipments = () => {
             >
                 {
                     floatingTab === 'addShip' &&
+                    
+                    <div className="py-6 px-4 pb-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
+                        <div className="flex flex-col items-center">
+                            {/* Tabs Navigation */}
+                            <div className="flex justify-center ml-3 mr-3 mb-3 w-full">
+                                <nav className="flex w-full max-w-2xl mx-auto rounded-lg overflow-hidden bg-gray p-2">
+                                    {[
+                                    { tab: "FCL", label: "FCL" },
+                                    { tab: "LCL", label: "LCL" },
+                                    { tab: "AIR", label: "AIR" },
+                                    ].map(({ tab, label }, idx, arr) => (
+                                        <>
+                                            <button
+                                                type="button"
+                                                key={tab}
+                                                onClick={() => setActiveTab(tab)}
+                                                className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
+                                                    ${
+                                                        activeTab === tab
+                                                        ? "bg-white text-black border-b-2 border-transparent rounded-lg"
+                                                        : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
+                                                    }
+                                                    ${idx === 0 ? "rounded-l-lg" : ""}
+                                                    ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
+                                                `}
+                                                style={{ outline: "none" }}
+                                            >
+                                                {label}
+                                            </button>
 
-                    <div className="flex flex-col items-center py-6 px-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
-                        {/* Tabs Navigation */}
-                        <div className="flex justify-center ml-3 mr-3 mb-3 w-full">
-                            <nav className="flex w-full max-w-2xl mx-auto rounded-lg overflow-hidden bg-gray p-2">
-                                {[
-                                { tab: "FCL", label: "FCL" },
-                                { tab: "LCL", label: "LCL" },
-                                { tab: "AIR", label: "AIR" },
-                                ].map(({ tab, label }, idx, arr) => (
-                                    <>
-                                        <button
-                                            type="button"
-                                            key={tab}
-                                            onClick={() => setActiveTab(tab)}
-                                            className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
-                                                ${
-                                                    activeTab === tab
-                                                    ? "bg-white text-black border-b-2 border-transparent rounded-lg"
-                                                    : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
-                                                }
-                                                ${idx === 0 ? "rounded-l-lg" : ""}
-                                                ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
-                                            `}
-                                            style={{ outline: "none" }}
-                                        >
-                                            {label}
-                                        </button>
+                                            {
+                                                (idx !== 2) && (
+                                                    <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
+                                                )
+                                            }
+                                        </>
+                                    ))}
+                                </nav>
+                            </div>
+                            
+                            {activeTab === "FCL" &&
+                                <div className="w-full">
+                                    <FCLTab
+                                        formData={ formData }
+                                        handleChange={ e => handleChange(e, 'fcl') }
+                                    />
+                                </div>
+                            }
+                            
+                            {activeTab === "LCL" &&
+                                <div className="w-full">
+                                    <LCLTab
+                                        formData={ formData }
+                                        handleChange={ e => handleChange(e, 'lcl') }
+                                    />
+                                </div>
+                            }
+                            
+                            {activeTab === "AIR" &&
+                                <div className="w-full">
+                                    <AIRTab
+                                        formData={ formData }
+                                        handleChange={ e => handleChange(e, 'air') }
+                                    />
+                                </div>
+                            }
 
-                                        {
-                                            (idx !== 2) && (
-                                                <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
-                                            )
-                                        }
-                                    </>
-                                ))}
-                            </nav>
+                            <div className="border-t border-gray-300 w-full flex w-full flex-1 pt-4"></div>
+
+                            <div className="mb-6 w-full">
+                                <label htmlFor="documentType" className="text-sm font-medium text-gray-700">Assigned To Client:</label>
+                                <select
+                                    name="documentType"
+                                    value={ formData[activeTab.toLowerCase()].clientId }
+                                    onChange={ e => {
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            [activeTab.toLocaleLowerCase()]: {
+                                                ...formData[activeTab.toLocaleLowerCase()],
+                                                clientId: e.target.value,
+                                            },
+                                        }));
+                                    }}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    {
+                                        clients.map(client => (
+                                            <option key={ client._id } value={ client._id }>
+                                                { client.name + (client.last ? client.last : "") }
+                                            </option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
                         </div>
                         
-                        {activeTab === "FCL" &&
-                            <div className="w-full">
-                                <FCLTab
-                                    formData={ emptyQuote }
-                                    handleChange={ () => {  } }
-                                />
-                            </div>
-                        }
-                        
-                        {activeTab === "LCL" &&
-                            <div className="w-full">
-                                <LCLTab
-                                    formData={ emptyQuote }
-                                    handleChange={ () => {  } }
-                                />
-                            </div>
-                        }
-                        
-                        {activeTab === "AIR" &&
-                            <div className="w-full">
-                                <AIRTab
-                                    formData={ emptyQuote }
-                                    handleChange={ () => {  } }
-                                />
-                            </div>
-                        }
+                        <div className="flex justify-end gap-3">
+                            <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
+                            <button
+                                className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none"
+                                onClick={ handleAddShip }
+                            >Confirm</button>
+                        </div>
                     </div>
                 }
 
@@ -295,9 +357,7 @@ const OpAgentShipments = () => {
 
                             <div className="flex justify-end gap-4 mt-6">
                                 <button className="bg-red-500 text-white px-4 py-2 rounded-lg bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
-                                <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" onClick={() => {
-                                    
-                                }}>Submit</button>
+                                <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" >Submit</button>
                             </div>
                         </form>
                     </div>

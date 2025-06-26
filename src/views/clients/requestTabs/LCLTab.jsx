@@ -15,12 +15,12 @@ const LCLTab = ({ formData, handleChange }) => {
                             Origin
                         </label>
                         <input
-                            name="origin"
+                            name="originPort"
                             type="text"
                             placeholder="Enter origin port"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 
-                            value={ formData.origin }
+                            value={ formData.originPort }
                             onChange={ handleChange }
                         />
                     </div>
@@ -30,12 +30,12 @@ const LCLTab = ({ formData, handleChange }) => {
                             Destination
                         </label>
                         <input
-                            name="destination"
+                            name="destinationPort"
                             type="text"
                             placeholder="Enter destination port"
                             className="mt-1 block w-full  rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
 
-                            value={ formData.destination }
+                            value={ formData.destinationPort }
                             onChange={ handleChange }
                         />
                     </div>
@@ -117,7 +117,7 @@ const LCLTab = ({ formData, handleChange }) => {
                                 placeholder="Total Packages"
                                 className="mt-1 border-transparent bg-transparent shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full text-center"
 
-                                value={ formData.volume }
+                                value={ formData.totalPackages }
                                 onChange={ handleChange }
                             />
                         </div>
@@ -137,12 +137,12 @@ const LCLTab = ({ formData, handleChange }) => {
                         </label>
                         
                         <input
-                            name="destination"
+                            name="packageType"
                             type="text"
                             placeholder="Enter package type"
                             className="mt-1 block w-full  rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
 
-                            value={ formData.destination }
+                            value={ formData.packageType }
                             onChange={ handleChange }
                         />
                     </div>
@@ -159,11 +159,11 @@ const LCLTab = ({ formData, handleChange }) => {
                             value={ formData.incoterm }
                             onChange={ handleChange }
                         >
-                            <option value="FOB">FOB</option>
-                            <option value="CIF">CIF</option>
-                            <option value="EXW">EXW</option>
-                            <option value="DDP">DDP</option>
-                            <option value="DDU">DDU</option>
+                            <option value="">Select Incoterm</option>
+                            
+                            <option value="fob">FOB</option>
+                            <option value="fca">FCA</option>
+                            <option value="exwork">EXWORK</option>
                         </select>
                     </div>
                 </div>
@@ -195,12 +195,12 @@ const LCLTab = ({ formData, handleChange }) => {
                         </label>
 
                         <textarea
-                            name="readyDate"
+                            name="cargoDescription"
                             type="date"
                             placeholder="Write A Description"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 
-                            value={ formData.readyDate }
+                            value={ formData.cargoDescription }
                             onChange={ handleChange }
                             
                             style={{ height: "150px", border: "1px #71717a solid", padding: "0.5rem 0.75rem" }}

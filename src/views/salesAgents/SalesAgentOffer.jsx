@@ -1,8 +1,10 @@
+import AIROffer from "components/offerCards/AIROffer";
+import FCLOffer from "components/offerCards/FCLOffer";
+import LCLOffer from "components/offerCards/LCLOffer";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { capitalizeWords } from "services/ApiQuote";
-import { formatDate } from "services/ApiQuote";
+import { toastSucc } from "services/ApiAll";
 import { CheckOfferExists } from "services/ApiSalesAgent";
 import { AddOffer } from "services/ApiSalesAgent";
 import { getQuoteById } from "services/ApiSalesAgent";
@@ -31,6 +33,9 @@ const SalesAgentOffer = () => {
             })
                 .then((response) => {
                     console.log(response);
+
+                    toastSucc(response.message)
+                    setOfferExists(true);
                 })
                 .catch((error) => {
                     console.error("Error fetching quotes:", error);
@@ -64,66 +69,29 @@ const SalesAgentOffer = () => {
                 <div className="mb-6 p-6 border rounded-xl shadow-md bg-white w-full">
                     <h2 className="text-2xl font-bold mb-4">Quote Details</h2>
 
-                    <div className="flex">
-                        <div className="flex flex-col flex-1">
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Origin: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ quote.origin }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Destination: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ quote.destination }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Weight: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ quote.weight } Kg</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Volume: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ quote.volume } m³</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Dimensions (HxWxL in meters): </label>
-                                <p className="text-lg font-semibold text-gray-700">{`${quote.dimensions.height} x ${quote.dimensions.width} x ${quote.dimensions.length}`}</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Container Type: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ quote.containerType && quote.containerType.toUpperCase() }</p>
-                            </div>
-                        </div>
+                    {
+                        quote.shipmentType === 'fcl' &&
                         
-                        <div className="flex flex-col flex-1">
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Incoterm: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ quote.incoterm && quote.incoterm.toUpperCase() }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Mode: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ capitalizeWords(quote.mode) }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Service Level: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ capitalizeWords(quote.serviceLevel) }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Requested Delivery: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ formatDate(quote.reqDelivery) }</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <label className="text-md text-gray-500">Ready Date: </label>
-                                <p className="text-lg font-semibold text-gray-700">{ formatDate(quote.readyDate) }</p>
-                            </div>
-                        </div>
-                    </div>
+                        <FCLOffer
+                            quote={ quote.detailsId }
+                        />
+                    }
+
+                    {
+                        quote.shipmentType === 'lcl' &&
+                        
+                        <LCLOffer
+                            quote={ quote.detailsId }
+                        />
+                    }
+
+                    {
+                        quote.shipmentType === 'air' &&
+                        
+                        <AIROffer
+                            quote={ quote.detailsId }
+                        />
+                    }
                 </div>
 
                 {/* Bottom Section: Offer or Decline */}

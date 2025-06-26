@@ -1,7 +1,7 @@
 import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
-
+import  { Toaster } from 'react-hot-toast';
 
 // components
 
@@ -23,6 +23,8 @@ import ClientNotifs from "views/clients/ClientNotifs";
 export default function Client() {
   return (
     <>
+      <Toaster />
+      
       <Navbar
         routes={ clientRoutes }
       />

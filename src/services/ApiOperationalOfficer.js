@@ -4,7 +4,40 @@ const apiUrl = "http://localhost:5000/operationalOfficer";
 
 export async function getShipments() {
   try {
-    const response = await axios.get(`${apiUrl}/shipments`, {
+    const response = await axios.get(`${apiUrl}/shipments?userId=${localStorage.getItem('userId')}`, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function addShipment(formData) {
+  try {
+    const response = await axios.post(`${apiUrl}/shipments`, formData, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function getClients() {
+  try {
+    const response = await axios.get(`${apiUrl}/clients`, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function getQuotes() {
+  try {
+    const response = await axios.get(`${apiUrl}/quotes`, {
         withCredentials: true
     });
     return response.data;

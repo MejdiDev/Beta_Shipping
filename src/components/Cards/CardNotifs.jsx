@@ -48,22 +48,22 @@ const CardNotifs = ({ notification, isFinal }) => {
   const history = useHistory();
 
   const getNotifIcon = type => {
-      switch(type.toLowerCase()) {
-          case "offer": 
-              return { bg: "#fec07e", icon: "fa fa-usd" }
+    switch(type.toLowerCase()) {
+      case "offer": 
+          return { bg: "#fec07e", icon: "fa fa-usd" }
 
-          case "shipment": 
-              return { bg: "#f47c6e", icon: "fa fa-ship" }
+      case "shipment": 
+          return { bg: "#f47c6e", icon: "fa fa-ship" }
 
-          case "quote": 
-              return { bg: "#4ea855", icon: "fa fa-pencil-square" }
+      case "quote": 
+          return { bg: "#4ea855", icon: "fa fa-pencil-square" }
 
-          case "document": 
-              return { bg: "#f8cc46", icon: "fa fa-file-text" }
+      case "document": 
+          return { bg: "#f8cc46", icon: "fa fa-file-text" }
 
-          case "task": 
-              return { bg: "#79c4ef", icon: "fa fa-tasks" }
-      }
+      case "task": 
+          return { bg: "#79c4ef", icon: "fa fa-tasks" }
+    }
   }
 
   return (

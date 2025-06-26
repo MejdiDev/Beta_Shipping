@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "assets/styles/tailwind.css";
-import { getClientQuotes } from "services/ApiQuote";
 
 import getCard from "components/Cards/CardQuoteShip";
 import { getQuotes } from "services/ApiSalesAgent";
@@ -31,10 +30,14 @@ export default function SalesAgentQuoteList() {
   useEffect(() => {
     getQuotes()
       .then((response) => {
-        setQuotes(response);
-        setShownQuotes(response);
+        const resQuotes = response.map(el => {
+          return { ...el.detailsId, ...el }
+        })
 
-        console.log("Quotes fetched successfully:", response);
+        setQuotes(resQuotes);
+        setShownQuotes(resQuotes);
+
+        console.log("Quotes fetched successfully:");
       })
       .catch((error) => {
         console.error("Error fetching quotes:", error);

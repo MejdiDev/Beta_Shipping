@@ -3,7 +3,7 @@ import FCLCard from "views/clients/quoteCard/FCLCard";
 import LCLCard from "views/clients/quoteCard/LCLCard";
 
 const getCard = ({ quote, index, min, to }) => {
-    switch(quote.mode) {
+    switch(quote.shipmentType) {
         case "fcl":
             return <FCLCard
                 quote={ quote }

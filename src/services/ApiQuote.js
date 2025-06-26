@@ -57,9 +57,16 @@ export function getLabelColor(status) {
   }
 }
 
-export async function requestQuote(dataQuote) {
+export async function requestQuote(shipmentMode, dataQuote) {
   try {
-    const response = await axios.post(`${apiUrl}/request`, {...dataQuote, userId: localStorage.getItem("userId")}, {
+    const response = await axios.post(`${apiUrl}/request`, {
+      shipmentMode,
+      
+      shipDetails: {
+        ...dataQuote,
+        clientId: localStorage.getItem("userId")
+      }
+    }, {
         withCredentials: true
     });
     return response.data;
@@ -71,7 +78,7 @@ export async function requestQuote(dataQuote) {
 export async function getClientQuotes() {
   try {
     const response = await axios.get(`${apiUrl}/my-quotes?userId=${localStorage.getItem("userId")}`, {
-        withCredentials: true
+        withCredentials: true,
     });
     return response.data;
   } catch (error) {
