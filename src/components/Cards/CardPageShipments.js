@@ -11,7 +11,7 @@ export default function CardPageShipments() {
   useEffect(() => {
       getShipments()
         .then(response => {
-          const resShips = formatShips(response)
+          const resShips = formatShips(response.shipments)
           setShips(resShips)
         })
         .catch((error) => {

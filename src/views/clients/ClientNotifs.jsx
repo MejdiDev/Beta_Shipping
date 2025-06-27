@@ -33,7 +33,7 @@ const ClientNotifs = () => {
 
     return (
         <div className="flex justify-center">
-            <div className="py-8 w-full" style={{ maxWidth: "1100px" }}>
+            <div className="py-8 w-full" style={{ maxWidth: "1300px", width: "calc(100dvw - 40px)" }}>
                 <div className="container mx-auto pt-6 rounded-lg border-2 bg-white pt-4">
                     <div className="flex justify-between items-center border-b-2 px-6 pb-4">
                         <div className="flex items-center">

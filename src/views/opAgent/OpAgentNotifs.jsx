@@ -1,8 +1,8 @@
 import CardNotifs from "components/Cards/CardNotifs";
 import { useEffect, useState } from "react";
-import { getNotifs } from "services/ApiSalesAgent";
+import { getNotifs } from "services/ApiOperationalOfficer";
 
-const SalesAgentNotifs = () => {
+const OpAgentNotifs = () => {
     const [notifs, setNotifs] = useState([])
 
     const [filter, setFilter] = useState('all'); // 'all', 'read', or 'unread'
@@ -20,8 +20,8 @@ const SalesAgentNotifs = () => {
     
     useEffect(() => {
         const filtered = notifs.filter((notif) => {
-        if (filter === 'all') return true;
-        return filter === 'read' ? notif.read : !notif.read;
+            if (filter === 'all') return true;
+            return filter === 'read' ? notif.read : !notif.read;
         });
         setFilteredNotifs(filtered);
     }, [filter, notifs]);
@@ -82,4 +82,4 @@ const SalesAgentNotifs = () => {
     );
 }
 
-export default SalesAgentNotifs;
+export default OpAgentNotifs;

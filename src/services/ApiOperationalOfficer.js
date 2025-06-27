@@ -56,3 +56,14 @@ export async function getTasks() {
     throw error.response?.data || { message: "Network error, please try again" };
   }
 }
+
+export async function getNotifs() {
+  try {
+    const response = await axios.get(`${apiUrl}/notif?userId=${localStorage.getItem('userId')}`, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}

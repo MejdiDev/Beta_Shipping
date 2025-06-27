@@ -14,17 +14,6 @@ export async function getNotifs() {
   }
 }
 
-export async function AddNotif(formData) {
-  try {
-    const response = await axios.post(`${apiUrl}/task`, { ...formData, assignedBy: localStorage.getItem('userId') }, {
-      withCredentials: true, // Include cookies in the request
-    })
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Network error, please try again" };
-  }
-}
-
 //Shipment
 
 export async function getShipments() {

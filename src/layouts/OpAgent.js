@@ -14,6 +14,7 @@ import OpAgentDashboard from "views/opAgent/OpAgentDashboard";
 import OpAgentShipments from "views/opAgent/OpAgentShipments";
 import OpAgentShipmentPage from "views/opAgent/OpAgentShipmentPage";
 import OpAgentTasks from "views/opAgent/OpAgentTasks";
+import OpAgentNotifs from "views/opAgent/OpAgentNotifs";
 
 export default function OpAgent() {
   return (
@@ -31,6 +32,8 @@ export default function OpAgent() {
 
             <Route path="/operationalOfficer/" exact component={OpAgentDashboard} />
             <Route path="/operationalOfficer/tasks" exact component={OpAgentTasks} />
+
+            <Route path="/operationalOfficer/notifications" exact component={OpAgentNotifs} />
 
             <Route path="/operationalOfficer/shipments" exact component={OpAgentShipments} />
             <Route path="/operationalOfficer/shipment/:id" exact component={OpAgentShipmentPage} />
