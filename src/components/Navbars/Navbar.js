@@ -18,7 +18,7 @@ export default function Navbar({ routes }) {
       .catch((error) => {
           console.error("Error fetching Notifications:", error);
       });
-  }, [])
+  })
 
   return (
     <>

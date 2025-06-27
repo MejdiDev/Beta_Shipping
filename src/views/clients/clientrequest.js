@@ -75,7 +75,7 @@ export const validateForm = ({ formData, activeTab }) => {
       
       const isFieldEmpty = fieldValue === null || fieldValue === "" || (typeof fieldValue === "number" && fieldValue === 0);
       
-      const exceptions = [];
+      const exceptions = document.querySelector(`[name="clientId"]`) ? [] : ["clientId"];
       const shouldSkip = exceptions.includes(fieldName);
       
       if (isFieldEmpty && !shouldSkip) {
