@@ -16,7 +16,7 @@ const AIRCard = ({ quote, index, min=false, to  }) => {
                     <div className="mr-3 ml-3">
                         <p className="text-xs text-gray-500">From</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        {quote.origin || "N/A"}
+                            {quote.originAirport || "N/A"}
                         </h4>
                     </div>
 
@@ -25,7 +25,7 @@ const AIRCard = ({ quote, index, min=false, to  }) => {
                     <div className="ml-3">
                         <p className="text-xs text-gray-500">To</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        {quote.destination || "N/A"}
+                            {quote.destinationAirport || "N/A"}
                         </h4>
                     </div>
                     </div>

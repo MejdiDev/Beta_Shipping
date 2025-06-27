@@ -10,6 +10,8 @@ export default function HeaderStats({ stats }) {
       }}>
         <div className="px-4 md:px-10 mx-auto w-full">
           <div>
+            <h2 className="ml-5 text-white text-md uppercase hidden lg:inline-block font-semibold mb-4">Quote Data :</h2>
+
             <div className="flex flex-wrap">
               {
                 stats &&

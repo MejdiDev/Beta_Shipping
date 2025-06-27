@@ -126,7 +126,7 @@ const FCLCard = ({ quote, index, min=false, to }) => {
 
                             <div className="flex flex-row w-full justify-center mt-4">
                                 <p className="">Quote ID&nbsp;</p>
-                                <h4 className="text-md font-semibold text-gray-700 mb-2">{ "#" + quote._id.substring(0, 7) }</h4>
+                                <h4 className="text-md font-semibold text-gray-700 mb-2">{ quote._id && ("#" + quote._id.substring(0, 7)) }</h4>
                             </div>
                         </div>
 

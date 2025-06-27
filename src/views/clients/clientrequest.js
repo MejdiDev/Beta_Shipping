@@ -10,6 +10,8 @@ import { toastErr } from "services/ApiAll";
 
 export const initFormData = {
   'fcl': {
+    clientId: '',
+    
     readyDate: "",
 
     originPort: "",
@@ -25,6 +27,8 @@ export const initFormData = {
   },
 
   'lcl': {
+    clientId: '',
+    
     readyDate: "",
 
     originPort: "",
@@ -44,6 +48,8 @@ export const initFormData = {
   },
 
   'air': {
+    clientId: '',
+    
     readyDate: "",
 
     originAirport: "",

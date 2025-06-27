@@ -6,6 +6,7 @@ import { getClientQuotes } from "services/ApiQuote";
 import jsonStats from "./data/stats.json";
 import getCard from "components/Cards/CardQuoteShip";
 import { getShipments } from "services/ApiClient";
+import { formatShips } from "views/opAgent/OpAgentShipments";
 
 export default function ClientPage() {
   const [ quotes, setQuotes ] = useState([]);
@@ -16,10 +17,14 @@ export default function ClientPage() {
   useEffect(() => {
     getClientQuotes()
       .then((response) => {
-        setQuotes(response);
+        const resQuotes = response.map(el => {
+          return { ...el.detailsId, shipmentType: el.shipmentType, status: el.status }
+        });
+
+        setQuotes(resQuotes);
         setStats(jsonStats);
 
-        console.log(response)
+        console.log("Quotes: ", resQuotes)
       })
       .catch((error) => {
         console.error("Error fetching quotes:", error);
@@ -27,8 +32,10 @@ export default function ClientPage() {
 
     getShipments()
       .then((response) => {
-        console.log("shipments: ", response)
-        setShips(response);
+        const resShips = formatShips(response);
+        setShips(resShips);
+
+        console.log("Shipments: ", resShips)
       })
       .catch((error) => {
         console.error("Error fetching quotes:", error);

@@ -3,6 +3,7 @@ import getCard from "components/Cards/CardQuoteShip";
 import React, { useEffect, useState } from "react";
 import { toastErr } from "services/ApiAll";
 import { getShipments } from "services/ApiClient";
+import { formatShips } from "views/opAgent/OpAgentShipments";
 
 export default function Shipments() {
   const [ships, setShips] = useState([]);
@@ -30,9 +31,7 @@ export default function Shipments() {
   useEffect(() => {
     getShipments()
       .then((response) => {
-        const resShips = response.map(el => {
-          return { ...el.quoteRequestId.detailsId, shipmentType: el.quoteRequestId.shipmentType, status: el.status }
-        })
+        const resShips = formatShips(response)
 
         setShips(resShips);
         setShownShips(resShips);

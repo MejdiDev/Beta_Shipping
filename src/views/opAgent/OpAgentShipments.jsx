@@ -14,8 +14,8 @@ import { addShipment } from "services/ApiOperationalOfficer";
 import { toastSucc } from "services/ApiAll";
 import { getClients } from "services/ApiOperationalOfficer";
 
-export const formatShips = response => {
-    return response.shipments.map(el => {
+export const formatShips = data => {
+    return data.map(el => {
         if(el.quoteRequestId) return { ...el.quoteRequestId.detailsId, shipmentType: el.quoteRequestId.shipmentType, status: el.status, clientId: el.clientId }
         else if(el.detailsId) return { ...el.detailsId, shipmentType: el.shipmentType, status: el.status, clientId: el.clientId }
     })
@@ -143,6 +143,20 @@ const OpAgentShipments = () => {
                 toastErr(error.message);
             });
     }
+    
+    const getShipData = () => {
+        getShipments()
+            .then((response) => {
+                const resShips = formatShips(response.shipments)
+                
+                setShips(resShips)
+                setShownShips(resShips);
+            })
+            .catch((error) => {
+                console.error("Error fetching shipments:", error);
+                toastErr(error.message)
+            });
+    }
 
     const handleAddShip = () => {
         if(!validateForm({ formData, activeTab })) return
@@ -150,6 +164,8 @@ const OpAgentShipments = () => {
         addShipment({ shipDetails: formData[ activeTab.toLowerCase() ], shipmentType: activeTab })
             .then((response) => {
                 toastSucc(response.message)
+
+                getShipData()
                 handleClose()
             })
             .catch((error) => {
@@ -159,17 +175,7 @@ const OpAgentShipments = () => {
     }
 
     useEffect(() => {
-        getShipments()
-            .then((response) => {
-                const resShips = formatShips(response)
-                
-                setShips(resShips)
-                setShownShips(resShips);
-            })
-            .catch((error) => {
-                console.error("Error fetching shipments:", error);
-                toastErr(error.message)
-            });
+        getShipData();
 
         getClients()
             .then((response) => {
@@ -200,7 +206,7 @@ const OpAgentShipments = () => {
                 {
                     floatingTab === 'addShip' &&
                     
-                    <div className="py-6 px-4 pb-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
+                    <div className="py-4 px-2 pb-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
                         <div className="flex flex-col items-center">
                             {/* Tabs Navigation */}
                             <div className="flex justify-center ml-3 mr-3 mb-3 w-full">
@@ -268,10 +274,10 @@ const OpAgentShipments = () => {
 
                             <div className="border-t border-gray-300 w-full flex w-full flex-1 pt-4"></div>
 
-                            <div className="mb-6 w-full">
-                                <label htmlFor="documentType" className="text-sm font-medium text-gray-700">Assigned To Client:</label>
+                            <div className="mb-6 w-full px-4">
+                                <label htmlFor="clientId" className="text-sm font-medium text-gray-700">Assigned To Client:</label>
                                 <select
-                                    name="documentType"
+                                    name="clientId"
                                     value={ formData[activeTab.toLowerCase()].clientId }
                                     onChange={ e => {
                                         setFormData((prev) => ({
@@ -284,6 +290,8 @@ const OpAgentShipments = () => {
                                     }}
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
+                                    <option value="">Select a client</option>
+
                                     {
                                         clients.map(client => (
                                             <option key={ client._id } value={ client._id }>
