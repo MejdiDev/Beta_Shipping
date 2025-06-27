@@ -1,5 +1,9 @@
 import { formatDate } from "services/ApiQuote";
 
+// weight
+// volume
+// numberOfPieces
+
 const AIROffer = ({ quote }) => {
     return (
         <div className="flex flex-col w-full">
@@ -7,22 +11,27 @@ const AIROffer = ({ quote }) => {
                 <div className="flex flex-col flex-1">
                     <div className="flex items-center gap-4">
                         <label className="text-md text-gray-500">Origin Port: </label>
-                        <p className="text-lg font-semibold text-gray-700">{ quote.originPort }</p>
+                        <p className="text-lg font-semibold text-gray-700">{ quote.originAirport }</p>
                     </div>
                     
                     <div className="flex items-center gap-4">
                         <label className="text-md text-gray-500">Destination Port: </label>
-                        <p className="text-lg font-semibold text-gray-700">{ quote.destinationPort }</p>
+                        <p className="text-lg font-semibold text-gray-700">{ quote.destinationAirport }</p>
                     </div>
                     
                     <div className="flex items-center gap-4">
-                        <label className="text-md text-gray-500">Container Type: </label>
-                        <p className="text-lg font-semibold text-gray-700">{ quote.containerType }</p>
+                        <label className="text-md text-gray-500">Weight: </label>
+                        <p className="text-lg font-semibold text-gray-700">{ quote.weight } Kg</p>
                     </div>
                     
                     <div className="flex items-center gap-4">
-                        <label className="text-md text-gray-500">Container Quantity: </label>
-                        <p className="text-lg font-semibold text-gray-700">{ quote.containerQuantity }</p>
+                        <label className="text-md text-gray-500">Volume: </label>
+                        <p className="text-lg font-semibold text-gray-700">{ quote.volume } m³</p>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <label className="text-md text-gray-500">Number of pieces: </label>
+                        <p className="text-lg font-semibold text-gray-700">{ quote.numberOfPieces }</p>
                     </div>
                 </div>
                 
@@ -53,7 +62,7 @@ const AIROffer = ({ quote }) => {
 
             <div className="w-full">
                 <label className="text-md text-gray-500">Goods Description: </label>
-                <p className="text-lg font-semibold text-gray-700">{ quote.goodsDescription }</p>
+                <p className="text-lg font-semibold text-gray-700">{ quote.cargoDescription }</p>
             </div>
         </div>
     );

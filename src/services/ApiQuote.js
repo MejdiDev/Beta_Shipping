@@ -57,6 +57,22 @@ export function getLabelColor(status) {
   }
 }
 
+export function getShipLabelColor(status) {
+  switch(status) {
+    case "created":
+      return"#3fccc1"
+
+    case "in transit":
+      return"#fe9a3b"
+
+    case "delivered":
+      return"#374658"
+
+    case "delayed":
+      return"#f44336"
+  }
+}
+
 export async function requestQuote(shipmentMode, dataQuote) {
   try {
     const response = await axios.post(`${apiUrl}/request`, {

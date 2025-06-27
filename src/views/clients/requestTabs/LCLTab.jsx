@@ -1,3 +1,4 @@
+import { formatInputDate } from "components/Cards/ClientTabs/EditClientTab";
 import { useState } from "react";
 import Switch from "react-switch";
 
@@ -180,7 +181,7 @@ const LCLTab = ({ formData, handleChange }) => {
                             placeholder="Pick a date"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 
-                            value={ formData.readyDate }
+                            value={ formData.readyDate && formatInputDate(formData.readyDate) }
                             onChange={ handleChange }
                             
                             style={{ border: "1px #71717a solid", padding: "0.5rem 0.75rem" }}
@@ -196,7 +197,6 @@ const LCLTab = ({ formData, handleChange }) => {
 
                         <textarea
                             name="cargoDescription"
-                            type="date"
                             placeholder="Write A Description"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 

@@ -1,3 +1,6 @@
+import { toastErr } from "services/ApiAll";
+import { toastSucc } from "services/ApiAll";
+
 const EditTab = ({ formData={ name: "", email: "", phone: "", status: "new" }, setFormData, handleClose, EditLead, setFocusId, getData }) => {
     return (
         <div className="bg-white rounded-lg shadow-lg p-6 text-center" style={{ width: "645px" }}>
@@ -76,12 +79,16 @@ const EditTab = ({ formData={ name: "", email: "", phone: "", status: "new" }, s
                 <button className="bg-red-500 text-white px-4 py-2 rounded-lg bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
                 <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" onClick={() => {
                     EditLead(!formData.salesAgent ? { ...formData, salesAgent: localStorage.getItem('userId') } : formData)
-                    .then(() => {
-                        getData()
-                    })
+                        .then(() => {
+                            toastSucc("Edited Successfully !");
+                            getData();
+                        })
+                        .catch((error) => {
+                            toastErr(error.messsage);
+                            console.error("Error fetching Notifications:", error);
+                        });
 
                     handleClose()
-
                     setFocusId()
                 }}>Submit</button>
             </div>

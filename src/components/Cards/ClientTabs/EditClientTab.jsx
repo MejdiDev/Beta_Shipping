@@ -1,10 +1,13 @@
-const EditClientTab = ({ formData={ title: "", assignedTo: "", priority: "", status: "", dueDate: new Date(), description: "" }, setFormData, handleClose, EditLead, setFocusId, getData }) => {
-    const formatInputDate = dateStr => {
-        const dateObj = new Date(dateStr);
-        const formattedDate = dateObj.toISOString().split('T')[0];
+export const formatInputDate = dateStr => {
+    if(!dateStr) return
 
-        return formattedDate;
-    }
+    const dateObj = new Date(dateStr);
+    const formattedDate = dateObj.toISOString().split('T')[0];
+
+    return formattedDate;
+}
+
+const EditClientTab = ({ formData={ title: "", assignedTo: "", priority: "", status: "", dueDate: new Date(), description: "" }, setFormData, handleClose, EditLead, setFocusId, getData }) => {
     return (
         <div className="bg-white rounded-lg shadow-lg p-6" style={{ width: "645px" }}>
             <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Enter Lead Information</h2>

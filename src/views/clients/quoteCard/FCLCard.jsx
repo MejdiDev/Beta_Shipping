@@ -1,13 +1,15 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import { getShipLabelColor } from "services/ApiQuote";
 import { getLabelColor, capitalizeWords, formatDate } from "services/ApiQuote";
 
-//bg-white shadow-lg rounded-lg overflow-hidden mb-8
+const FCLCard = ({ quote, index, min=false, to, model="quote" }) => {
+    const getLocalLabel = ( model === "quote" ? getLabelColor : getShipLabelColor)
 
-const FCLCard = ({ quote, index, min=false, to }) => {
     return (
         <div key={index}>
             <div className="position-relative flex flex-row space-y-4" style={{ height: "200px" }}>
-            <div style={{ width: "6px", backgroundColor: getLabelColor(quote.status)}}></div>
+            <div style={{ width: "6px", backgroundColor: getLocalLabel(quote.status)}}></div>
             
             <div className="flex flex-col flex-1">
                 <div className="flex items-center gap-10 p-4 flex-1 border-r-2">
@@ -48,9 +50,9 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                         <div className="border-1 border-gray-300 bg-black h-10"></div>
 
                         <div>
-                            <p className="text-xs text-gray-500">Weight</p>
+                            <p className="text-xs text-gray-500">Quantity</p>
                             <h4 className="text-md font-semibold text-gray-700">
-                            {quote.weight ? `${quote.weight} kg` : "N/A"}
+                                {quote.containerQuantity ? `${quote.containerQuantity}` : "N/A"}
                             </h4>
                         </div>
                     </>
@@ -104,7 +106,7 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                 {   min ?
 
                     <div className="grid-cols-2 gap-4 flex mt-2">
-                        <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
+                        <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
                         { capitalizeWords(quote.status) }
                         </div>
                     </div>
@@ -119,13 +121,13 @@ const FCLCard = ({ quote, index, min=false, to }) => {
                             </div>
 
                             <div className="grid-cols-2 gap-4 flex mt-2">
-                                <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
-                                Quote { capitalizeWords(quote.status) }
+                                <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
+                                    { capitalizeWords(model + " " + quote.status) }
                                 </div>
                             </div>
 
                             <div className="flex flex-row w-full justify-center mt-4">
-                                <p className="">Quote ID&nbsp;</p>
+                                <p className="">{ capitalizeWords(model) } ID&nbsp;</p>
                                 <h4 className="text-md font-semibold text-gray-700 mb-2">{ quote._id && ("#" + quote._id.substring(0, 7)) }</h4>
                             </div>
                         </div>

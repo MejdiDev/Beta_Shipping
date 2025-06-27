@@ -78,14 +78,10 @@ export const validateForm = ({ formData, activeTab }) => {
       const exceptions = document.querySelector(`[name="clientId"]`) ? [] : ["clientId"];
       const shouldSkip = exceptions.includes(fieldName);
       
-      if (isFieldEmpty && !shouldSkip) {
-        const inputElement = document.querySelector(`[name="${fieldName}"]`);
-        console.log(inputElement)
+      const inputElement = document.querySelector(`[name="${fieldName}"]`);
 
-        if (inputElement) {
-          inputElement.classList.add('border-red');
-        }
-
+      if (inputElement && isFieldEmpty && !shouldSkip) {
+        inputElement.classList.add('border-red');
         isValid = false;
 
       } else {

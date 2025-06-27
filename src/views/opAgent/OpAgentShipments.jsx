@@ -13,11 +13,15 @@ import { validateForm } from "views/clients/clientrequest";
 import { addShipment } from "services/ApiOperationalOfficer";
 import { toastSucc } from "services/ApiAll";
 import { getClients } from "services/ApiOperationalOfficer";
+import DelTab from "components/Cards/LeadTabs/DelTab";
+import EditTab from "components/Cards/LeadTabs/EditTab";
+import { deleteShipment } from "services/ApiOperationalOfficer";
+import { editShipment } from "services/ApiOperationalOfficer";
 
 export const formatShips = data => {
     return data.map(el => {
-        if(el.quoteRequestId) return { ...el.quoteRequestId.detailsId, shipmentType: el.quoteRequestId.shipmentType, status: el.status, clientId: el.clientId }
-        else if(el.detailsId) return { ...el.detailsId, shipmentType: el.shipmentType, status: el.status, clientId: el.clientId }
+        if(el.quoteRequestId) return { ...el.quoteRequestId.detailsId, shipmentId: el._id, shipmentType: el.quoteRequestId.shipmentType, status: el.status, clientId: el.clientId, detailsId: el.quoteRequestId.detailsId._id }
+        else if(el.detailsId) return { ...el.detailsId, shipmentId: el._id, shipmentType: el.shipmentType, status: el.status, clientId: el.clientId, detailsId: el.detailsId._id }
     })
 }
 
@@ -77,50 +81,189 @@ export const FileUpload = ({ setUpFile }) => {
     );
 }
 
-const OpAgentShipments = () => {
-    const [ships, setShips] = useState([]);
-    const [clients, setClients] = useState([]);
+const handleClose = () => {
+    document.getElementById("window-wrapper").style.opacity = "0"
 
-    const [shownShips, setShownShips] = useState([]);
+    setTimeout(() => {
+        document.getElementById("window-wrapper").style.display = "none"
+        document.querySelector("body").style.overflow = "auto"
+    }, 150);
+}
 
-    const [focusShip, setFocusShip] = useState();
-    
-    const [query, setQuery] = useState("");
-
-    const [docType, setDocType] = useState("");
-    const [docCategory, setDocCategory] = useState("");
-
-    const [docData, setDocData] = useState({ fileName: "", documentType: "" });
-    const [upFile, setUpFile] = useState('');
-
-    const [floatingTab, setFloatingTab] = useState();
-    const [activeTab, setActiveTab] = useState("FCL");
-
-    const [formData, setFormData] = useState(initFormData);
+const EditShip = ({ getData, formData, setFormData, setFocusShip, clients }) => {
+    const [activeTab, setActiveTab] = useState((formData.activeShipType && formData.activeShipType !== "") ? formData.activeShipType : "FCL");
 
     const handleChange = (e, mode) => {
         const { name, value } = e.target;
 
         setFormData((prev) => ({
-        ...prev,
-        [mode]: {
-            ...formData[mode],
-            [name]: value,
-        },
+            ...prev,
+            [mode]: {
+                ...formData[mode],
+                [name]: value,
+            },
         }));
     };
 
-    const handleClose = () => {
-        setFocusShip();
+    const handleAddShip = () => {
+        if(!validateForm({ formData, activeTab })) return
 
-        document.getElementById("window-wrapper").style.opacity = "0"
+        addShipment({ shipDetails: formData[ activeTab.toLowerCase() ], shipmentType: activeTab })
+            .then((response) => {
+                toastSucc(response.message)
 
-        setTimeout(() => {
-            document.getElementById("window-wrapper").style.display = "none"
-            document.querySelector("body").style.overflow = "auto"
-        }, 150);
+                getData()
+                handleClose()
+
+                setFormData()
+                setFocusShip()
+            })
+            .catch((error) => {
+                console.error("Error adding shipment:", error);
+                toastErr(error.message)
+            });
     }
 
+    const handleEditShip = () => {
+        if(!validateForm({ formData, activeTab })) return
+
+        editShipment(formData[ activeTab.toLowerCase() ])
+            .then((response) => {
+                toastSucc(response.message)
+
+                getData()
+                handleClose()
+
+                setFormData()
+                setFocusShip()
+            })
+            .catch((error) => {
+                console.error("Error adding shipment:", error);
+                toastErr(error.message);
+            });
+    }
+
+    return (
+        <div className="py-4 px-2 pb-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
+            <div className="flex flex-col items-center">
+
+                {/* Tabs Navigation */}
+                {   
+                    !formData.activeShipType &&
+
+                    <div className="flex justify-center ml-3 mr-3 mb-3 w-full">
+                        <nav className="flex w-full max-w-2xl mx-auto rounded-lg overflow-hidden bg-gray p-2">
+                            {[
+                            { tab: "FCL", label: "FCL" },
+                            { tab: "LCL", label: "LCL" },
+                            { tab: "AIR", label: "AIR" },
+                            ].map(({ tab, label }, idx, arr) => (
+                                <>
+                                    <button
+                                        type="button"
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
+                                            ${
+                                                activeTab === tab
+                                                ? "bg-white text-black border-b-2 border-transparent rounded-lg"
+                                                : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
+                                            }
+                                            ${idx === 0 ? "rounded-l-lg" : ""}
+                                            ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
+                                        `}
+                                        style={{ outline: "none" }}
+                                    >
+                                        {label}
+                                    </button>
+
+                                    {
+                                        (idx !== 2) && (
+                                            <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
+                                        )
+                                    }
+                                </>
+                            ))}
+                        </nav>
+                    </div>
+                }
+                
+                {activeTab.toLowerCase() === "fcl" &&
+                    <div className="w-full">
+                        <FCLTab
+                            formData={ formData['fcl'] }
+                            handleChange={ e => handleChange(e, 'fcl') }
+                        />
+                    </div>
+                }
+                
+                {activeTab.toLowerCase() === "lcl" &&
+                    <div className="w-full">
+                        <LCLTab
+                            formData={ formData['lcl'] }
+                            handleChange={ e => handleChange(e, 'lcl') }
+                        />
+                    </div>
+                }
+                
+                {activeTab.toLowerCase() === "air" &&
+                    <div className="w-full">
+                        <AIRTab
+                            formData={ formData['air'] }
+                            handleChange={ e => handleChange(e, 'air') }
+                        />
+                    </div>
+                }
+
+                <div className="border-t border-gray-300 w-full flex w-full flex-1 pt-4"></div>
+
+                <div className="mb-6 w-full px-4">
+                    <label htmlFor="clientId" className="text-sm font-medium text-gray-700">Assigned To Client:</label>
+                    <select
+                        name="clientId"
+                        value={ formData[activeTab.toLowerCase()].clientId }
+                        onChange={ e => {
+                            setFormData((prev) => ({
+                                ...prev,
+                                [activeTab.toLocaleLowerCase()]: {
+                                    ...formData[activeTab.toLocaleLowerCase()],
+                                    clientId: e.target.value,
+                                },
+                            }));
+                        }}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Select a client</option>
+
+                        {
+                            clients.map(client => (
+                                <option key={ client._id } value={ client._id }>
+                                    { client.name + (client.last ? client.last : "") }
+                                </option>
+                            ))
+                        }
+                    </select>
+                </div>
+            </div>
+            
+            <div className="flex justify-end gap-3">
+                <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 outline-none" onClick={() => {
+                    handleClose()
+
+                    setFormData()
+                    setFocusShip()
+                }}>Cancel</button>
+                <button
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none"
+                    onClick={( !formData.activeShipType ? handleAddShip : handleEditShip )}
+                >Confirm</button>
+            </div>
+        </div>
+    );
+}
+
+const AddDoc = ({ docData, setDocData, focusShip, getData }) => {
+    const [upFile, setUpFile] = useState('');
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -135,6 +278,8 @@ const OpAgentShipments = () => {
             .then((response) => {
                 if(response.document) {
                     toastSucc(response.message);
+
+                    getData()
                     handleClose();
                 }
             })
@@ -143,6 +288,84 @@ const OpAgentShipments = () => {
                 toastErr(error.message);
             });
     }
+
+    return (
+        <div className="bg-white rounded-lg shadow-lg p-6" style={{ width: "645px" }}>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Enter Document Information</h2>
+            
+            <form onSubmit={ handleSubmit } className="space-y-4 flex flex-col gap-3">
+                {/* Document Category */}
+                <div>
+                    <label htmlFor="documentType" className="text-sm font-medium text-gray-700">Document Type</label>
+                    <select
+                        name="documentType"
+                        value={ docData.documentType }
+                        onChange={ e => setDocData({ ...docData, documentType: e.target.value }) }
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        {
+                            docTypeOpt.map((docType, index) => (
+                                <option key={ index } value={ docType }>
+                                    { docType }
+                                </option>
+                            ))
+                        }
+                    </select>
+                </div>
+
+                {/* Document Type */}
+                <div>
+                    <label htmlFor="documentCategory" className="text-sm font-medium text-gray-700">Document Category</label>
+                    <select
+                        name="documentCategory"
+                        value={ docData.documentCategory }
+                        onChange={ e => setDocData({ ...docData, documentCategory: e.target.value }) }
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="financial">Financial</option>
+                        <option value="operational">Operational</option>
+                    </select>
+                </div>
+
+                {/* File Upload */}
+                <div>
+                    {
+                        focusShip &&
+
+                        <FileUpload
+                            setUpFile={ setUpFile }
+                        />
+                    }
+                </div>
+
+                <div className="flex justify-end gap-4 mt-6">
+                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
+                    <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" >Submit</button>
+                </div>
+            </form>
+        </div>
+    );
+}
+
+const OpAgentShipments = () => {
+    const [ships, setShips] = useState([]);
+    const [clients, setClients] = useState([]);
+
+    const [shownShips, setShownShips] = useState([]);
+
+    const [focusShip, setFocusShip] = useState();
+    
+    const [query, setQuery] = useState("");
+
+    const [docType, setDocType] = useState("");
+    const [docCategory, setDocCategory] = useState("");
+
+    const [docData, setDocData] = useState({ fileName: "", documentType: "" });
+
+    const [floatingTab, setFloatingTab] = useState();
+
+    const [formData, setFormData] = useState(initFormData);
+    const [shipFormData, setShipFormData] = useState(initFormData);
     
     const getShipData = () => {
         getShipments()
@@ -154,22 +377,6 @@ const OpAgentShipments = () => {
             })
             .catch((error) => {
                 console.error("Error fetching shipments:", error);
-                toastErr(error.message)
-            });
-    }
-
-    const handleAddShip = () => {
-        if(!validateForm({ formData, activeTab })) return
-
-        addShipment({ shipDetails: formData[ activeTab.toLowerCase() ], shipmentType: activeTab })
-            .then((response) => {
-                toastSucc(response.message)
-
-                getShipData()
-                handleClose()
-            })
-            .catch((error) => {
-                console.error("Error adding shipment:", error);
                 toastErr(error.message)
             });
     }
@@ -196,179 +403,70 @@ const OpAgentShipments = () => {
 
                 onClick={ e => {
                     if(e.target.id !== "window-wrapper") return
+
                     handleClose()
+                    setShipFormData()
+                    setFocusShip()
                 }}
 
                 style={{
-                    paddingTop: (floatingTab === 'addShip' ? "calc(80px + 18rem)" : "80px")
+                    paddingTop: (
+                        (floatingTab === 'add_ship' || floatingTab === 'edit_ship') ?
+                            (   floatingTab === 'add_ship' ? "calc(80px + 27rem)" : "calc(80px + 20rem)" )
+                    : "80px" )
                 }}
             >
                 {
-                    floatingTab === 'addShip' &&
+                    (floatingTab === 'add_ship' && shipFormData) &&
                     
-                    <div className="py-4 px-2 pb-4" style={{ backgroundColor: "white", borderRadius: ".65rem", maxWidth: "700px", width: "100%" }}>
-                        <div className="flex flex-col items-center">
-                            {/* Tabs Navigation */}
-                            <div className="flex justify-center ml-3 mr-3 mb-3 w-full">
-                                <nav className="flex w-full max-w-2xl mx-auto rounded-lg overflow-hidden bg-gray p-2">
-                                    {[
-                                    { tab: "FCL", label: "FCL" },
-                                    { tab: "LCL", label: "LCL" },
-                                    { tab: "AIR", label: "AIR" },
-                                    ].map(({ tab, label }, idx, arr) => (
-                                        <>
-                                            <button
-                                                type="button"
-                                                key={tab}
-                                                onClick={() => setActiveTab(tab)}
-                                                className={`flex-1 px-6 border-2 py-2 text-sm font-medium capitalize transition-all duration-200 focus:outline-none
-                                                    ${
-                                                        activeTab === tab
-                                                        ? "bg-white text-black border-b-2 border-transparent rounded-lg"
-                                                        : "bg-gray-100 text-gray-500 hover:bg-red-200 border-b-2 border-transparent"
-                                                    }
-                                                    ${idx === 0 ? "rounded-l-lg" : ""}
-                                                    ${idx === arr.length - 1 ? "rounded-r-lg" : ""}
-                                                `}
-                                                style={{ outline: "none" }}
-                                            >
-                                                {label}
-                                            </button>
+                    <EditShip
+                        getData={getShipData}
 
-                                            {
-                                                (idx !== 2) && (
-                                                    <div className="border-1 border-gray-300 bg-black h-10 mx-4"></div>
-                                                )
-                                            }
-                                        </>
-                                    ))}
-                                </nav>
-                            </div>
-                            
-                            {activeTab === "FCL" &&
-                                <div className="w-full">
-                                    <FCLTab
-                                        formData={ formData }
-                                        handleChange={ e => handleChange(e, 'fcl') }
-                                    />
-                                </div>
-                            }
-                            
-                            {activeTab === "LCL" &&
-                                <div className="w-full">
-                                    <LCLTab
-                                        formData={ formData }
-                                        handleChange={ e => handleChange(e, 'lcl') }
-                                    />
-                                </div>
-                            }
-                            
-                            {activeTab === "AIR" &&
-                                <div className="w-full">
-                                    <AIRTab
-                                        formData={ formData }
-                                        handleChange={ e => handleChange(e, 'air') }
-                                    />
-                                </div>
-                            }
-
-                            <div className="border-t border-gray-300 w-full flex w-full flex-1 pt-4"></div>
-
-                            <div className="mb-6 w-full px-4">
-                                <label htmlFor="clientId" className="text-sm font-medium text-gray-700">Assigned To Client:</label>
-                                <select
-                                    name="clientId"
-                                    value={ formData[activeTab.toLowerCase()].clientId }
-                                    onChange={ e => {
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            [activeTab.toLocaleLowerCase()]: {
-                                                ...formData[activeTab.toLocaleLowerCase()],
-                                                clientId: e.target.value,
-                                            },
-                                        }));
-                                    }}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="">Select a client</option>
-
-                                    {
-                                        clients.map(client => (
-                                            <option key={ client._id } value={ client._id }>
-                                                { client.name + (client.last ? client.last : "") }
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                            </div>
-                        </div>
+                        formData={shipFormData}
+                        setFormData={setShipFormData}
+                        setFocusShip={setFocusShip}
                         
-                        <div className="flex justify-end gap-3">
-                            <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
-                            <button
-                                className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none"
-                                onClick={ handleAddShip }
-                            >Confirm</button>
-                        </div>
-                    </div>
+                        clients={clients}
+                    />
                 }
 
                 {   floatingTab === 'addDoc' &&
 
-                    <div className="bg-white rounded-lg shadow-lg p-6" style={{ width: "645px" }}>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Enter Document Information</h2>
+                    <AddDoc
+                        docData={docData}
+                        setDocData={setDocData}
+
+                        focusShip={focusShip}
+                        getData={getShipData}
+                    />
+                }
+
+                {
+                    (floatingTab === 'del_ship' && focusShip ) &&
+
+                    <DelTab
+                        focusId={focusShip.shipmentId}
+                        setFocusId={() => {}}
                         
-                        <form onSubmit={ handleSubmit } className="space-y-4 flex flex-col gap-3">
-                            {/* Document Category */}
-                            <div>
-                                <label htmlFor="documentType" className="text-sm font-medium text-gray-700">Document Type</label>
-                                <select
-                                    name="documentType"
-                                    value={ docData.documentType }
-                                    onChange={ e => setDocData({ ...docData, documentType: e.target.value }) }
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    {
-                                        docTypeOpt.map((docType, index) => (
-                                            <option key={ index } value={ docType }>
-                                                { docType }
-                                            </option>
-                                        ))
-                                    }
-                                </select>
-                            </div>
+                        getData={getShipData}
+                        DeleteLead={deleteShipment}
 
-                            {/* Document Type */}
-                            <div>
-                                <label htmlFor="documentCategory" className="text-sm font-medium text-gray-700">Document Category</label>
-                                <select
-                                    name="documentCategory"
-                                    value={ docData.documentCategory }
-                                    onChange={ e => setDocData({ ...docData, documentCategory: e.target.value }) }
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="financial">Financial</option>
-                                    <option value="operational">Operational</option>
-                                </select>
-                            </div>
+                        handleClose={handleClose}
+                    />
+                }
 
-                            {/* File Upload */}
-                            <div>
-                                {
-                                    focusShip &&
+                {
+                    (floatingTab === 'edit_ship' && shipFormData) &&
+                    
+                    <EditShip
+                        getData={getShipData}
 
-                                    <FileUpload
-                                        setUpFile={ setUpFile }
-                                    />
-                                }
-                            </div>
-
-                            <div className="flex justify-end gap-4 mt-6">
-                                <button className="bg-red-500 text-white px-4 py-2 rounded-lg bg-red-600 outline-none" onClick={() => handleClose()}>Cancel</button>
-                                <button className="bg-green-500 text-white px-4 py-2 rounded-lg bg-lightBlue-600 outline-none" >Submit</button>
-                            </div>
-                        </form>
-                    </div>
+                        formData={shipFormData}
+                        setFormData={setShipFormData}
+                        setFocusShip={setFocusShip}
+                        
+                        clients={clients}
+                    />
                 }
             </div>
 
@@ -447,7 +545,8 @@ const OpAgentShipments = () => {
                     <button
                         className="w-full bg-lightBlue-500 text-white py-2 px-6 rounded shadow-md"
                         onClick={() => {
-                            setFloatingTab('addShip')
+                            setFloatingTab('add_ship')
+                            setShipFormData(initFormData)
 
                             document.querySelector("body").style.overflow = "hidden"
                             document.getElementById("window-wrapper").style.display = "flex"
@@ -465,25 +564,59 @@ const OpAgentShipments = () => {
                             shownShips.map((shipment, index) =>
                                 <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-8 flex flex-col">
 
-                                    { getCard({ quote: shipment, index, to: ('/operationalOfficer/shipment/' + shipment._id) }) }
+                                    { getCard({ quote: shipment, index, to: ('/operationalOfficer/shipment/' + shipment._id), model: "shipment" }) }
 
                                     <div className="border-1 border-gray-300 bg-black h-1 mx-4"></div>
 
-                                    <button
-                                        className="py-4 outline-none"
+                                    <div className="w-full py-4 px-6 flex justify-between items-center">
+                                        <button
+                                            className="outline-none"
 
-                                        onClick={() => {
-                                            setFloatingTab('addDoc')
+                                            onClick={() => {
+                                                setFloatingTab('addDoc')
+                                                setFocusShip(shipment)
 
-                                            setFocusShip(shipment);
+                                                document.querySelector("body").style.overflow = "hidden"
+                                                document.getElementById("window-wrapper").style.display = "flex"
 
-                                            document.querySelector("body").style.overflow = "hidden"
-                                            document.getElementById("window-wrapper").style.display = "flex"
+                                                setTimeout(() => {
+                                                    document.getElementById("window-wrapper").style.opacity = "1"
+                                                }, 1);
+                                        }}>Add Document</button>
+                                        
+                                        <div className="flex items-center gap-4">
+                                            <button
+                                                className="text-lightBlue-500 outline-none"
 
-                                            setTimeout(() => {
-                                            document.getElementById("window-wrapper").style.opacity = "1"
-                                            }, 1);
-                                    }}>Add Document</button>
+                                                onClick={() => {
+                                                    setShipFormData({ ...initFormData, [shipment.shipmentType]: shipment, activeShipType: shipment.shipmentType})
+                                                    setFloatingTab('edit_ship')
+
+                                                    document.querySelector("body").style.overflow = "hidden"
+                                                    document.getElementById("window-wrapper").style.display = "flex"
+
+                                                    setTimeout(() => {
+                                                        document.getElementById("window-wrapper").style.opacity = "1"
+                                                    }, 1);
+                                                }}
+                                            >Edit</button>
+                                            <button
+                                                className="text-red-500 outline-none"
+                                                
+                                                onClick={() => {
+                                                    setFloatingTab('del_ship')
+                                                    setFocusShip(shipment)
+
+                                                    document.querySelector("body").style.overflow = "hidden"
+                                                    document.getElementById("window-wrapper").style.display = "flex"
+
+                                                    setTimeout(() => {
+                                                        document.getElementById("window-wrapper").style.opacity = "1"
+                                                    }, 1);
+                                                }}
+                                            >Delete</button>
+                                        </div>
+                                    </div>
 
                                 </div>
                             )

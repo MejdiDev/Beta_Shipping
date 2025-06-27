@@ -122,7 +122,7 @@ export default function ClientPage() {
               ships.slice(0, 3).map((shipment, index) => 
                 <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
                   {
-                    getCard({ quote: shipment, index, min: true })
+                    getCard({ quote: shipment, index, min: true, model: "shipment" })
                   }
                 </div>
               )

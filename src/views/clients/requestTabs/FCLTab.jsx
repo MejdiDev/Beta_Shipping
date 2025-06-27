@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { formatInputDate } from "components/Cards/ClientTabs/EditClientTab";
+import { useEffect, useState } from "react";
 import Switch from "react-switch";
 
 const FCLTab = ({ formData, handleChange }) => {
@@ -140,7 +141,7 @@ const FCLTab = ({ formData, handleChange }) => {
                             placeholder="Pick a date"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 
-                            value={ formData.readyDate }
+                            value={ formatInputDate(formData.readyDate) }
                             onChange={ handleChange }
                             
                             style={{ border: "1px #71717a solid", padding: "0.5rem 0.75rem" }}
@@ -156,7 +157,6 @@ const FCLTab = ({ formData, handleChange }) => {
 
                         <textarea
                             name="goodsDescription"
-                            type="date"
                             placeholder="Write A Description"
                             className="mt-1 rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full"
 

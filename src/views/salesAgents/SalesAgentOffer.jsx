@@ -145,9 +145,11 @@ const SalesAgentOffer = () => {
                                     <input
                                         value={offer}
                                         onChange={(e) => setOffer(e.target.value)}
+
+                                        type="number"
+                                        min={0}
                                         placeholder="Enter your offer here"
-                                        rows="4"
-                                        className="w-full p-2 border-2 border-gray-200 rounded-lg"
+                                        className="rounded-lg  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 w-full outline-none"
                                     />
                                 </div>
                             ) : (

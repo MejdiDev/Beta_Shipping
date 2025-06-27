@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 import { AcceptOffer } from "services/ApiClient";
-import { capitalizeWords } from "services/ApiQuote";
-import { formatDate } from "services/ApiQuote";
 import { GetOfferById } from "services/ApiClient";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import FCLOffer from "components/offerCards/FCLOffer";

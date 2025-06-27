@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import { getShipLabelColor } from "services/ApiQuote";
 import { getLabelColor, capitalizeWords, formatDate } from "services/ApiQuote";
 
-const LCLCard = ({ quote, index, min=false, to  }) => {
+const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
+    const getLocalLabel = ( model === "quote" ? getLabelColor : getShipLabelColor)
+
     return (
         <div key={index}>
             <div className="position-relative flex flex-row space-y-4" style={{ height: "200px" }}>
-            <div style={{ width: "6px", backgroundColor: getLabelColor(quote.status)}}></div>
+            <div style={{ width: "6px", backgroundColor: getLocalLabel(quote.status)}}></div>
             
             <div className="flex flex-col flex-1">
                 <div className="flex items-center gap-10 p-4 flex-1 border-r-2">
@@ -101,7 +104,7 @@ const LCLCard = ({ quote, index, min=false, to  }) => {
             {   min ?
 
                 <div className="grid-cols-2 gap-4 flex mt-2">
-                    <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
+                    <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
                     { capitalizeWords(quote.status) }
                     </div>
                 </div>
@@ -116,13 +119,13 @@ const LCLCard = ({ quote, index, min=false, to  }) => {
                         </div>
 
                         <div className="grid-cols-2 gap-4 flex mt-2">
-                            <div className="px-2 py-1" style={{ backgroundColor: getLabelColor(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
-                            Quote { capitalizeWords(quote.status) }
+                            <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
+                            { capitalizeWords(model + " " + quote.status) }
                             </div>
                         </div>
 
                         <div className="flex flex-row w-full justify-center mt-4">
-                            <p className="">Quote ID&nbsp;</p>
+                            <p className="">{capitalizeWords(model)} ID&nbsp;</p>
                             <h4 className="text-md font-semibold text-gray-700 mb-2">{ "#" + quote._id.substring(0, 7) }</h4>
                         </div>
                     </div>

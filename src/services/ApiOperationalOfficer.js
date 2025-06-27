@@ -24,6 +24,28 @@ export async function addShipment(formData) {
   }
 }
 
+export async function editShipment(formData) {
+  try {
+    const response = await axios.put(`${apiUrl}/shipments/${formData.shipmentId}`, formData, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function deleteShipment(id) {
+  try {
+    const response = await axios.delete(`${apiUrl}/shipments/${id}`, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
 export async function getClients() {
   try {
     const response = await axios.get(`${apiUrl}/clients`, {
