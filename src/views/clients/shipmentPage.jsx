@@ -4,17 +4,17 @@ import LCLOffer from "components/offerCards/LCLOffer";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { toastErr } from "services/ApiAll";
-import { getShipmentById } from "services/ApiOperationalOfficer";
-import { formatShips } from "./OpAgentShipments";
+import { getShipmentById } from "services/ApiClient";
+import { formatShips } from "views/opAgent/OpAgentShipments";
 
-const OpAgentShipmentPage = () => {
+const ShipmentPage = () => {
     const [ship, setShip] = useState();
     const { id } = useParams();
 
     useEffect(() => {
         getShipmentById(id)
             .then((response) => {
-                setShip(formatShips([response.shipment])[0]);
+                setShip(formatShips([response])[0]);
             })
             .catch((error) => {
                 console.error("Error fetching shipment:", error);
@@ -25,7 +25,7 @@ const OpAgentShipmentPage = () => {
     return ship && (
         <>
             <div className="mx-auto w-full py-8" style={{ maxWidth: "800px" }}>
-                            {/* Top Section: Quote Details */}
+                {/* Top Section: Quote Details */}
                 <div className="mb-6 p-6 border rounded-xl shadow-md bg-white w-full">
                     <h2 className="text-2xl font-bold mb-4">Shipment Details</h2>
 
@@ -66,4 +66,4 @@ const OpAgentShipmentPage = () => {
     );
 }
 
-export default OpAgentShipmentPage;
+export default ShipmentPage;

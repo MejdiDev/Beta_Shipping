@@ -101,3 +101,14 @@ export async function getClientQuotes() {
     throw error.response?.data || { message: "Network error, please try again" };
   }
 }
+
+export async function getClientQuoteById(id) {
+  try {
+    const response = await axios.get(`http://localhost:5000/client/getClientQuote/${id}`, {
+        withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}

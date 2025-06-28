@@ -38,7 +38,7 @@ const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
                     <div>
                         <p className="text-xs text-gray-500">Package Type</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        ABC2
+                            { quote.packageType }
                         </h4>
                     </div>
 
@@ -50,7 +50,7 @@ const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
                             <div>
                                 <p className="text-xs text-gray-500">Total Packages</p>
                                 <h4 className="text-md font-semibold text-gray-700">
-                                6
+                                    { quote.totalPackages }
                                 </h4>
                             </div>
                         </>
@@ -104,8 +104,8 @@ const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
             {   min ?
 
                 <div className="grid-cols-2 gap-4 flex mt-2">
-                    <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
-                    { capitalizeWords(quote.status) }
+                    <div className="px-2 py-1 text-white" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", position: "absolute", top: "15px", right: "15px" }}>
+                        { capitalizeWords(quote.status) }
                     </div>
                 </div>
 
@@ -119,8 +119,8 @@ const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
                         </div>
 
                         <div className="grid-cols-2 gap-4 flex mt-2">
-                            <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
-                            { capitalizeWords(model + " " + quote.status) }
+                            <div className="px-2 py-1 text-white" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px" }}>
+                                { capitalizeWords(model + " " + quote.status) }
                             </div>
                         </div>
 

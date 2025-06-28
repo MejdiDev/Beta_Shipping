@@ -15,6 +15,7 @@ const SalesAgentOffer = () => {
 
     const [offer, setOffer] = useState('');
     const [declineReason, setDeclineReason] = useState('');
+    
     const [status, setStatus] = useState('accepted');
 
     const { id } = useParams();
@@ -23,24 +24,25 @@ const SalesAgentOffer = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (status === 'rejected') {
-            console.log('Declined:', declineReason);
-        } else {
-            AddOffer({
-                quoteId: quote._id,
-                agentId: localStorage.getItem("userId"),
-                amount: offer
-            })
-                .then((response) => {
-                    console.log(response);
-
-                    toastSucc(response.message)
-                    setOfferExists(true);
-                })
-                .catch((error) => {
-                    console.error("Error fetching quotes:", error);
-                });
+        let offerData = {
+            quoteStatus: status,
+            quoteId: quote._id,
+            agentId: localStorage.getItem("userId")
         }
+
+        if (status === 'rejected') offerData['declineReason'] = declineReason
+        else if (status === 'accepted') offerData['amount'] = offer
+    
+        AddOffer(offerData)
+            .then((response) => {
+                console.log(response);
+
+                toastSucc(response.message)
+                setOfferExists(true);
+            })
+            .catch((error) => {
+                console.error("Error fetching quotes:", error);
+            });
     };
 
     useEffect(() => {

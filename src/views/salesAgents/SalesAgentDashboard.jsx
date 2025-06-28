@@ -22,9 +22,9 @@ const SalesAgentDashboard = () => {
             <div className="relative bg-blueGray-100">
                 <HeaderStats
                     stats={[
-                        { bg: "#3fccc1", num: quotes.filter(el => el.status === "active").length, title: "Active", icon: "fa fa-file"},
-                        { bg: "#fe9a3b", num: quotes.filter(el => el.status === "accepted").length, title: "Accepted", icon: "fa fa-check"},
-                        { bg: "#374658", num: quotes.filter(el => el.status === "delivered").length, title: "Delivered", icon: "fa fa-box"},
+                        { bg: "#374658", num: quotes.length, title: "Total", icon: "fa fa-box"},
+                        { bg: "#3fccc1", num: quotes.filter(el => el.status === "pending").length, title: "Pending", icon: "fa fa-file"},
+                        { bg: "#fe9a3b", num: quotes.filter(el => el.status === "quoted").length, title: "Accepted", icon: "fa fa-check"},
                         { bg: "#f44336", num: quotes.filter(el => el.status === "rejected").length, title: "Rejected", icon: "fa fa-times"}
                     ]}
                 />

@@ -106,7 +106,7 @@ const FCLCard = ({ quote, index, min=false, to, model="quote" }) => {
                 {   min ?
 
                     <div className="grid-cols-2 gap-4 flex mt-2">
-                        <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white"), position: "absolute", top: "15px", right: "15px" }}>
+                        <div className="px-2 py-1 text-white" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", position: "absolute", top: "15px", right: "15px" }}>
                         { capitalizeWords(quote.status) }
                         </div>
                     </div>
@@ -121,7 +121,7 @@ const FCLCard = ({ quote, index, min=false, to, model="quote" }) => {
                             </div>
 
                             <div className="grid-cols-2 gap-4 flex mt-2">
-                                <div className="px-2 py-1" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px", color: (quote.status !== "in transit" && "white") }}>
+                                <div className="px-2 py-1 text-white" style={{ backgroundColor: getLocalLabel(quote.status), borderRadius: "20px" }}>
                                     { capitalizeWords(model + " " + quote.status) }
                                 </div>
                             </div>

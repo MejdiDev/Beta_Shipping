@@ -27,11 +27,33 @@ export async function getShipments() {
   }
 }
 
+export async function getShipmentById(id) {
+  try {
+    const response = await axios.get(`${apiUrl}/shipments/${id}/details`, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data.shipment;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
 //Offer
 
 export async function AcceptOffer(formData) {
   try {
     const response = await axios.post(`${apiUrl}/offer/accept`, { ...formData, clientId: localStorage.getItem('userId') }, {
+      withCredentials: true, // Include cookies in the request
+    })
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
+export async function RejectOffer(offerId) {
+  try {
+    const response = await axios.post(`${apiUrl}/offer/reject`, { offerId, clientId: localStorage.getItem('userId') }, {
       withCredentials: true, // Include cookies in the request
     })
     return response.data;

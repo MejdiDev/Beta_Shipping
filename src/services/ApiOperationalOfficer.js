@@ -13,6 +13,17 @@ export async function getShipments() {
   }
 }
 
+export async function getShipmentById(id) {
+  try {
+    const response = await axios.get(`${apiUrl}/shipments/${id}`, {
+        withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Network error, please try again" };
+  }
+}
+
 export async function addShipment(formData) {
   try {
     const response = await axios.post(`${apiUrl}/shipments`, formData, {

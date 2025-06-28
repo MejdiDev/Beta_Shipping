@@ -14,7 +14,6 @@ import { addShipment } from "services/ApiOperationalOfficer";
 import { toastSucc } from "services/ApiAll";
 import { getClients } from "services/ApiOperationalOfficer";
 import DelTab from "components/Cards/LeadTabs/DelTab";
-import EditTab from "components/Cards/LeadTabs/EditTab";
 import { deleteShipment } from "services/ApiOperationalOfficer";
 import { editShipment } from "services/ApiOperationalOfficer";
 
@@ -217,7 +216,7 @@ const EditShip = ({ getData, formData, setFormData, setFocusShip, clients }) => 
 
                 <div className="border-t border-gray-300 w-full flex w-full flex-1 pt-4"></div>
 
-                <div className="mb-6 w-full px-4">
+                <div className="mb-3 w-full px-4">
                     <label htmlFor="clientId" className="text-sm font-medium text-gray-700">Assigned To Client:</label>
                     <select
                         name="clientId"
@@ -244,6 +243,33 @@ const EditShip = ({ getData, formData, setFormData, setFocusShip, clients }) => 
                         }
                     </select>
                 </div>
+
+                {
+                    formData.activeShipType &&
+
+                    <div className="mb-6 w-full px-4">
+                        <label htmlFor="clientId" className="text-sm font-medium text-gray-700">Status: </label>
+                        <select
+                            name="clientId"
+                            value={ formData[activeTab.toLowerCase()].status }
+                            onChange={ e => {
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    [activeTab.toLocaleLowerCase()]: {
+                                        ...formData[activeTab.toLocaleLowerCase()],
+                                        status: e.target.value,
+                                    },
+                                }));
+                            }}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="created">Created</option>
+                            <option value="in transit">In Transit</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="delayed">Delayed</option>
+                        </select>
+                    </div>
+                }
             </div>
             
             <div className="flex justify-end gap-3">
@@ -357,22 +383,21 @@ const OpAgentShipments = () => {
     
     const [query, setQuery] = useState("");
 
-    const [docType, setDocType] = useState("");
-    const [docCategory, setDocCategory] = useState("");
+    const [status, setStatus] = useState("");
+    const [shipType, setShipType] = useState("");
+    const [incoterm, setIncoterm] = useState("");
 
     const [docData, setDocData] = useState({ fileName: "", documentType: "" });
 
     const [floatingTab, setFloatingTab] = useState();
-
-    const [formData, setFormData] = useState(initFormData);
     const [shipFormData, setShipFormData] = useState(initFormData);
     
     const getShipData = () => {
         getShipments()
             .then((response) => {
-                const resShips = formatShips(response.shipments)
+                const resShips = formatShips(response.shipments).sort((b, a) => new Date(a.createdAt) - new Date(b.createdAt));
                 
-                setShips(resShips)
+                setShips(resShips);
                 setShownShips(resShips);
             })
             .catch((error) => {
@@ -394,6 +419,17 @@ const OpAgentShipments = () => {
             });
     }, [])
 
+    useEffect(() => {
+        setShownShips(
+            ships.filter(el => (
+            el._id.includes(query) &&
+            (status.length !== 0 ? el.status === status : true) &&
+            (shipType.length !== 0 ? el.shipmentType === shipType : true) &&
+            (incoterm.length !== 0 ? el.incoterm === incoterm : true)
+            ))
+        )
+    }, [ query, status, shipType, incoterm ]);
+
     return (
         <>
             <div
@@ -411,9 +447,7 @@ const OpAgentShipments = () => {
 
                 style={{
                     paddingTop: (
-                        (floatingTab === 'add_ship' || floatingTab === 'edit_ship') ?
-                            (   floatingTab === 'add_ship' ? "calc(80px + 27rem)" : "calc(80px + 20rem)" )
-                    : "80px" )
+                        (floatingTab === 'add_ship' || floatingTab === 'edit_ship') ? "calc(80px + 27rem)" : "80px" )
                 }}
             >
                 {
@@ -494,48 +528,44 @@ const OpAgentShipments = () => {
                     <div className="w-full mt-3 flex gap-4">
                         <div className="flex-1">
                             <label className="block  text-sm font-medium text-gray-700 mb-1">
-                                Document Type
+                                Status
                             </label>
-            
-                            <select onChange={ e => {
-                                setDocType(e.target.value)
-                
-                                setShownShips(
-                                    ships.filter(el => (
-                                        el._id.includes(query) &&
-                                        (docType.length !== 0 ? el.documentType === docType : true) &&
-                                        (docCategory.length !== 0 ? el.documentCategory === docCategory : true)
-                                    ))
-                                )
-                            }} className="w-full rounded-lg">
-                                {
-                                    docTypeOpt.map((docType, index) => (
-                                        <option key={ index } value={ docType }>
-                                            { docType }
-                                        </option>
-                                    ))
-                                }
+
+                            <select onChange={ e => setStatus(e.target.value) } className="w-full rounded-lg">
+                                <option value="">--- Select Status ---</option>
+
+                                <option value="created">Created</option>
+                                <option value="in transit">In Transit</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="delayed">Delayed</option>
                             </select>
                         </div>
-            
+
                         <div className="flex-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Document Category
+                                Shipment Type
                             </label>
-            
-                            <select onChange={ e => {
-                                setDocCategory(e.target.value)
-                
-                                setShownShips(
-                                    ships.filter(el => (
-                                        el._id.includes(query) &&
-                                        (docType.length !== 0 ? el.documentType === docType : true) &&
-                                        (docCategory.length !== 0 ? el.documentCategory === docCategory : true)
-                                    ))
-                                )
-                            }} className="w-full rounded-lg">
-                                <option value="financial">Financial</option>
-                                <option value="operational">Operational</option>
+
+                            <select onChange={ e => setShipType(e.target.value) } className="w-full rounded-lg">
+                                <option value="">--- Select Shipment Type ---</option>
+
+                                <option value="fcl">FCL</option>
+                                <option value="lcl">LCL</option>
+                                <option value="air">AIR</option>
+                            </select>
+                        </div>
+                        
+                        <div className="flex-1">
+                            <label className="block  text-sm font-medium text-gray-700 mb-1">
+                                Incoterm
+                            </label>
+
+                            <select onChange={ e => setIncoterm(e.target.value) } className="w-full rounded-lg">
+                                <option value="">--- Select Incoterm ---</option>
+
+                                <option value="fob">FOB</option>
+                                <option value="fca">FCA</option>
+                                <option value="exwork">EXWORK</option>
                             </select>
                         </div>
                     </div>
@@ -564,7 +594,7 @@ const OpAgentShipments = () => {
                             shownShips.map((shipment, index) =>
                                 <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-8 flex flex-col">
 
-                                    { getCard({ quote: shipment, index, to: ('/operationalOfficer/shipment/' + shipment._id), model: "shipment" }) }
+                                    { getCard({ quote: shipment, index, to: ('/operationalOfficer/shipment/' + shipment.shipmentId), model: "shipment" }) }
 
                                     <div className="border-1 border-gray-300 bg-black h-1 mx-4"></div>
 
@@ -589,7 +619,7 @@ const OpAgentShipments = () => {
                                                 className="text-lightBlue-500 outline-none"
 
                                                 onClick={() => {
-                                                    setShipFormData({ ...initFormData, [shipment.shipmentType]: shipment, activeShipType: shipment.shipmentType})
+                                                    setShipFormData({ ...initFormData, [shipment.shipmentType]: shipment, activeShipType: shipment.shipmentType })
                                                     setFloatingTab('edit_ship')
 
                                                     document.querySelector("body").style.overflow = "hidden"

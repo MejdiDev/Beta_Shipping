@@ -19,6 +19,8 @@ import profileSettings from "views/clients/profileSettings";
 import clientRoutes from "../components/Navbars/navRoutes/client.json";
 import ClientOffer from "views/clients/ClientOffer";
 import ClientNotifs from "views/clients/ClientNotifs";
+import ShipmentPage from "views/clients/shipmentPage";
+import QuotePage from "views/clients/quotePage";
 
 export default function Client() {
   return (
@@ -41,12 +43,17 @@ export default function Client() {
             <Route path="/client/clientrequest" exact component={Clientrequest} />
 
             <Route path="/client/quotes" exact component={quotes} />
+            <Route path="/client/quote/:id" exact component={QuotePage} />
+
             <Route path="/client/shipments" exact component={Shipments} />
+            <Route path="/client/shipment/:id" exact component={ShipmentPage} />
+
             <Route path="/client/documents" exact component={Documents} />
 
             <Route path="/client/profile" exact component={profileSettings} />
            
           </Switch>
+
           <div className=" mt-20 w-full">
             <Clientfooter />
           </div>

@@ -8,22 +8,17 @@ import LCLOffer from "components/offerCards/LCLOffer";
 import AIROffer from "components/offerCards/AIROffer";
 import { toastSucc } from "services/ApiAll";
 import { toastErr } from "services/ApiAll";
+import { RejectOffer } from "services/ApiClient";
 
 const ClientOffer = () => {
     const [offer, setOffer] = useState('');
     const { id } = useParams();
     const history = useHistory();
-    
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        
-    };
 
     const getOfferData = () => {
         GetOfferById(id)
             .then((response) => {
-                setOffer({ ...response.quoteId, amount: response.amount, offerId: response._id, result: response.result });
+                setOffer({ ...response.quoteId, amount: response.amount, declineReason: response.declineReason, offerId: response._id, result: response.result });
             })
             .catch((error) => {
                 console.error("Error fetching offers:", error);
@@ -36,6 +31,21 @@ const ClientOffer = () => {
 
     const acceptOffer = () => {
         AcceptOffer(offer)
+            .then((response) => {
+                console.log(response);
+
+                getOfferData();
+                toastSucc(response.message);
+            })
+            .catch((error) => {
+                console.error("Error fetching offers:", error);
+
+                toastErr(error.message);
+            });
+    }
+
+    const rejectOffer = () => {
+        RejectOffer(offer.offerId)
             .then((response) => {
                 console.log(response);
 
@@ -82,19 +92,34 @@ const ClientOffer = () => {
                 </div>
 
                 {/* Bottom Section: Accept or Decline */}
-                <div className="p-6 border rounded-xl shadow-md bg-white w-full">
-                    <div className="flex items-center gap-4">
-                        <label className="text-md text-gray-500">Our Offer:</label>
-                        <p className="text-lg font-semibold text-gray-700">{ offer.amount } TND</p>
+                {
+                    !offer.declineReason ?
+
+                    (   offer.amount && 
+
+                        <div className="p-6 border rounded-xl shadow-md bg-white w-full">
+                            <div className="flex items-center gap-4">
+                                <label className="text-md text-gray-500">Our Offer:</label>
+                                <p className="text-lg font-semibold text-gray-700">{ offer.amount } TND</p>
+                            </div>
+                        </div>
+                    )
+
+                    :
+
+                    <div className="p-6 border rounded-xl shadow-md bg-white w-full">
+                        <label className="text-md text-gray-500">Declined for:</label>
+                        <p className="text-lg font-semibold text-gray-700">{ offer.declineReason }</p>
                     </div>
-                </div>
+                }
 
                 {
-                    offer.result === "pending" ?
+                    ( offer.result === "pending" && !offer.declineReason ) ?
 
                     <div className="mt-6 flex gap-4 justify-end items-center">
                         <button
                             className="bg-red-500 text-white p-2 rounded-lg"
+                            onClick={ rejectOffer }
                         >
                             Decline
                         </button>
@@ -110,11 +135,14 @@ const ClientOffer = () => {
                     :
 
                     <>
-                        <div className="col-span-ful mt-8">
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                                <p className="text-red-600">You have already { offer.result } this offer !</p>
+                        {   !offer.declineReason &&
+                        
+                            <div className="col-span-ful mt-8">
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                                    <p className="text-red-600">You have already { offer.result } this offer !</p>
+                                </div>
                             </div>
-                        </div>
+                        }
 
                         <div 
                             className="w-full flex justify-end mt-4"

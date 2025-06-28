@@ -5,16 +5,17 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { toastErr } from "services/ApiAll";
 import { getShipmentById } from "services/ApiOperationalOfficer";
-import { formatShips } from "./OpAgentShipments";
+import { getClientQuoteById } from "services/ApiQuote";
+import { formatShips } from "views/opAgent/OpAgentShipments";
 
-const OpAgentShipmentPage = () => {
+const QuotePage = () => {
     const [ship, setShip] = useState();
     const { id } = useParams();
 
     useEffect(() => {
-        getShipmentById(id)
+        getClientQuoteById(id)
             .then((response) => {
-                setShip(formatShips([response.shipment])[0]);
+                setShip(formatShips([response])[0]);
             })
             .catch((error) => {
                 console.error("Error fetching shipment:", error);
@@ -27,7 +28,7 @@ const OpAgentShipmentPage = () => {
             <div className="mx-auto w-full py-8" style={{ maxWidth: "800px" }}>
                             {/* Top Section: Quote Details */}
                 <div className="mb-6 p-6 border rounded-xl shadow-md bg-white w-full">
-                    <h2 className="text-2xl font-bold mb-4">Shipment Details</h2>
+                    <h2 className="text-2xl font-bold mb-4">Quote Details</h2>
 
                     {
                         ship.shipmentType === 'fcl' &&
@@ -53,17 +54,9 @@ const OpAgentShipmentPage = () => {
                         />
                     }
                 </div>
-
-                {/* Bottom Section: Accept or Decline */}
-                <div className="p-6 border rounded-xl shadow-md bg-white w-full">
-                    <div className="flex items-center gap-4">
-                        <label className="text-md text-gray-500">Our Offer:</label>
-                        <p className="text-lg font-semibold text-gray-700">1,278 TND</p>
-                    </div>
-                </div>
             </div>
         </>
     );
 }
 
-export default OpAgentShipmentPage;
+export default QuotePage;

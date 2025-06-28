@@ -10,28 +10,19 @@ export default function Shipments() {
   const [query, setQuery] = useState("");
 
   const [status, setStatus] = useState("");
-  const [mode, setMode] = useState("");
-  const [service, setService] = useState("");
+  const [shipType, setShipType] = useState("");
+  const [incoterm, setIncoterm] = useState("");
 
   const [shownShips, setShownShips] = useState([])
 
   const handleSubmit = e => {
     e.preventDefault();
-    
-    setShownShips(
-      ships.filter(el => (
-        el._id.includes(query) &&
-        (status.length !== 0 ? el.status === status : true) &&
-        (mode.length !== 0 ? el.mode === mode : true) &&
-        (service.length !== 0 ? el.service === service : true)
-      ))
-    );
   }
 
   useEffect(() => {
     getShipments()
       .then((response) => {
-        const resShips = formatShips(response)
+        const resShips = formatShips(response).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         setShips(resShips);
         setShownShips(resShips);
@@ -43,6 +34,17 @@ export default function Shipments() {
         toastErr(error.message)
       });
   }, []);
+
+  useEffect(() => {
+    setShownShips(
+      ships.filter(el => (
+        el._id.includes(query) &&
+        (status.length !== 0 ? el.status === status : true) &&
+        (shipType.length !== 0 ? el.shipmentType === shipType : true) &&
+        (incoterm.length !== 0 ? el.incoterm === incoterm : true)
+      ))
+    )
+  }, [ query, status, shipType, incoterm ]);
   
 
   return (
@@ -73,43 +75,24 @@ export default function Shipments() {
                   Status
               </label>
 
-              <select onChange={ e => {
-                setStatus(e.target.value)
+              <select onChange={ e => setStatus(e.target.value) } className="w-full rounded-lg">
+                <option value="">--- Select Status ---</option>
 
-                setShownShips(
-                  ships.filter(el => (
-                    el._id.includes(query) &&
-                    (status.length !== 0 ? el.status === status : true) &&
-                    (mode.length !== 0 ? el.mode === mode : true) &&
-                    (service.length !== 0 ? el.service === service : true)
-                  ))
-                )
-              }} className="w-full rounded-lg">
-                <option value="requested">Requested</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-                <option value="delivered">Delivered</option>
+                <option value="created">Created</option>
                 <option value="in transit">In Transit</option>
+                <option value="delivered">Delivered</option>
+                <option value="delayed">Delayed</option>
               </select>
             </div>
 
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mode
+                Shipment Type
               </label>
 
-              <select onChange={ e => {
-                setMode(e.target.value)
+              <select onChange={ e => setShipType(e.target.value) } className="w-full rounded-lg">
+                <option value="">--- Select Shipment Type ---</option>
 
-                setShownShips(
-                  ships.filter(el => (
-                    el._id.includes(query) &&
-                    (status.length !== 0 ? el.status === status : true) &&
-                    (mode.length !== 0 ? el.mode === mode : true) &&
-                    (service.length !== 0 ? el.service === service : true)
-                  ))
-                )
-              } } className="w-full rounded-lg">
                 <option value="fcl">FCL</option>
                 <option value="lcl">LCL</option>
                 <option value="air">AIR</option>
@@ -121,23 +104,12 @@ export default function Shipments() {
                   Incoterm
               </label>
 
-              <select onChange={ e => {
-                setService(e.target.value)
+              <select onChange={ e => setIncoterm(e.target.value) } className="w-full rounded-lg">
+                <option value="">--- Select Incoterm ---</option>
 
-                setShownShips(
-                  ships.filter(el => (
-                    el._id.includes(query) &&
-                    (status.length !== 0 ? el.status === status : true) &&
-                    (mode.length !== 0 ? el.mode === mode : true) &&
-                    (service.length !== 0 ? el.service === service : true)
-                  ))
-                )
-              } } className="w-full rounded-lg">
-                <option value="FOB">FOB</option>
-                <option value="CIF">CIF</option>
-                <option value="EXW">EXW</option>
-                <option value="DDP">DDP</option>
-                <option value="DDU">DDU</option>
+                <option value="fob">FOB</option>
+                <option value="fca">FCA</option>
+                <option value="exwork">EXWORK</option>
               </select>
             </div>
           </div>
@@ -148,7 +120,7 @@ export default function Shipments() {
             {shownShips.length > 0 ? (
               shownShips.map((shipment, index) =>
                 <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-8">
-                  { getCard({ quote: shipment, index }) }
+                  { getCard({ quote: shipment, index, model: "shipment" }) }
                 </div>
               )
             ) : (
