@@ -93,6 +93,7 @@ export const validateForm = ({ formData, activeTab }) => {
       }
     });
 
+    toastErr("All fields need to be filled in !")
     return isValid;
   };
 
