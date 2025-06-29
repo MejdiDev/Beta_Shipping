@@ -77,7 +77,7 @@ const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
                     <div>
                         <p className="text-xs text-gray-500">Width</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        {quote.width ? `${quote.width} kg` : "N/A"}
+                        {quote.width ? `${quote.width} m` : "N/A"}
                         </h4>
                     </div>
 
@@ -86,7 +86,7 @@ const LCLCard = ({ quote, index, min=false, to, model="quote"  }) => {
                     <div>
                         <p className="text-xs text-gray-500">Height</p>
                         <h4 className="text-md font-semibold text-gray-700">
-                        {quote.height ? `${quote.height} kg` : "N/A"}
+                        {quote.height ? `${quote.height} m` : "N/A"}
                         </h4>
                     </div>
 

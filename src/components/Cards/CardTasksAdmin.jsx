@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom";
-import { toastErr } from "services/ApiAll";
-import { getShipments } from "services/ApiOperationalOfficer";
 import { formatDate } from "services/ApiQuote";
-import { formatShips } from "views/opAgent/OpAgentShipments";
+import { getPriorityColor } from "services/ApiSalesAgent";
+import { getTasks } from "services/ApiAdmin";
 
-export default function CardPageShipments() {
-  const [ships, setShips] = useState([])
-
+export default function CardTasksAdmin() {
+  const [tasks, setTasks] = useState([])
+  
   useEffect(() => {
-      getShipments()
-        .then(response => {
-          const resShips = formatShips(response.shipments)
-          setShips(resShips)
-        })
+      getTasks()
+        .then(response => setTasks(response.filter(el => el.status !== "completed")))
         .catch((error) => {
-          console.error("Error requesting shipments:", error);
-          toastErr("Failed to request shipments. Please try again.");
+          console.error("Error requesting quote:", error);
+          alert("Failed to request quote. Please try again.");
         });
   }, [])
 
@@ -27,11 +23,11 @@ export default function CardPageShipments() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h3 className="font-semibold text-base text-blueGray-700">
-                Shipment List
+                Pending Tasks
               </h3>
             </div>
             <div className="relative w-full max-w-full flex-grow flex-1 text-right">
-              <Link to="/operationalOfficer/shipments">
+              <Link to="/admin/tasks">
                 <button
                   className="bg-lightBlue-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
@@ -43,62 +39,40 @@ export default function CardPageShipments() {
           </div>
         </div>
         <div className="block w-full overflow-x-auto">
-          {/* Projects table */}
           <table className="items-center w-full bg-transparent border-collapse table-alt rounded-b-lg overflow-hidden">
-            <thead>
+            <thead className="thead-light">
               <tr>
                 <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                  Origin
-                </th>
-
-                <th className="bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"></th>
-
-
-                <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                  Destination
+                  Title
                 </th>
 
                 <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                  Mode
+                  Priority
                 </th>
-
+                
                 <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                  Incoterm
-                </th>
-
-                <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                  Ready Date
+                  Due Date
                 </th>
               </tr>
             </thead>
 
             <tbody>
               {
-                ships.map((ship, index) => (
+                tasks.map((task, index) => (
                   <tr key={index}>
-                    <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-                      { ship.shipmentType !== "air" ? ship.originPort : ship.originAirport }
-                    </th>
 
-                    <td>
-                      <img className="ml-3 mr-3" src="./arrow.png" alt="Arrow" style={{ height: "30px" }} />
-                    </td>
-
-                    <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-                      { ship.shipmentType !== "air" ? ship.destinationPort : ship.destinationAirport }
+                    <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs p-4 text-left">
+                      { task.title }
                     </th>
 
                     <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      { ship.shipmentType && ship.shipmentType.toUpperCase() }
+                      <p style={{ backgroundColor: getPriorityColor(task.priority), padding: "5px 10px", borderRadius: "1rem", width: "70px", textAlign: "center", color: "white" }}>{ task.priority }</p>
                     </td>
 
                     <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      { ship.incoterm && ship.incoterm.toUpperCase() }
+                      { formatDate(task.dueDate) }
                     </td>
 
-                    <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      { ship.readyDate && formatDate(ship.readyDate) }
-                    </td>
                   </tr>
                 ))
               }

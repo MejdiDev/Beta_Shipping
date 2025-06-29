@@ -2,5 +2,25 @@
     {
         "label": "Dashboard",
         "route": "/admin"
+    },
+
+    {
+        "label": "Users",
+        "route": "/admin/users"
+    },
+
+    {
+        "label": "Tasks",
+        "route": "/admin/tasks"
+    },
+
+    {
+        "label": "Shipments",
+        "route": "/admin/shipments"
+    },
+
+    {
+        "label": "Quotes",
+        "route": "/admin/quotes"
     }
 ]

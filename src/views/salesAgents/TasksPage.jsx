@@ -29,6 +29,8 @@ const TasksPage = () => {
         <>
             <div className="flex flex-col flex-wrap mt-4">
                 <HeaderStats
+                    model="Task"
+                    
                     stats={[
                         { bg: "#3fccc1", num: tasks.filter(el => el.status === "pending").length, title: "Pending", icon: "fa fa-spinner"},
                         { bg: "#fe9a3b", num: tasks.filter(el => el.status === "in progress").length, title: "In Progress", icon: "fa fa-tasks"},
@@ -40,7 +42,6 @@ const TasksPage = () => {
                 <div className="w-full mb-12 -mt-24 flex justify-center" style={{ paddingLeft: "3.5rem", paddingRight: "3.5rem" }}>
                     <CardTable
                         model="Task"
-                        editable={ true }
 
                         leads={ tasks }
                         getData={ getData }

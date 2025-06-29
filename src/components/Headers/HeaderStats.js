@@ -1,7 +1,7 @@
 import React from "react";
 import CardStats from "components/Cards/CardStats.js";
 
-export default function HeaderStats({ stats }) {
+export default function HeaderStats({ stats, model }) {
   return (
     <>
       <div className="relative bg-lightBlue-400 pb-32 pt-20" style={{
@@ -10,7 +10,7 @@ export default function HeaderStats({ stats }) {
       }}>
         <div className="px-4 md:px-10 mx-auto w-full">
           <div>
-            <h2 className="ml-5 text-white text-md uppercase hidden lg:inline-block font-semibold mb-4">Quote Data :</h2>
+            <h2 className="ml-5 text-white text-md uppercase hidden lg:inline-block font-semibold mb-4">{ model } Data :</h2>
 
             <div className="flex flex-wrap">
               {

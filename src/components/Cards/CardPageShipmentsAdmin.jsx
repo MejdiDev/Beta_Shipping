@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import { getShipments } from "services/ApiAdmin";
 import { toastErr } from "services/ApiAll";
-import { getShipments } from "services/ApiOperationalOfficer";
 import { formatDate } from "services/ApiQuote";
 import { formatShips } from "views/opAgent/OpAgentShipments";
 
-export default function CardPageShipments() {
+export default function CardPageShipmentsAdmin() {
   const [ships, setShips] = useState([])
 
   useEffect(() => {
       getShipments()
         .then(response => {
           const resShips = formatShips(response.shipments)
-          setShips(resShips)
+          setShips(resShips.slice(0, 5))
         })
         .catch((error) => {
           console.error("Error requesting shipments:", error);
@@ -31,7 +31,7 @@ export default function CardPageShipments() {
               </h3>
             </div>
             <div className="relative w-full max-w-full flex-grow flex-1 text-right">
-              <Link to="/operationalOfficer/shipments">
+              <Link to="/admin/shipments">
                 <button
                   className="bg-lightBlue-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
@@ -52,7 +52,6 @@ export default function CardPageShipments() {
                 </th>
 
                 <th className="bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"></th>
-
 
                 <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                   Destination

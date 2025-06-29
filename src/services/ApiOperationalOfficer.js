@@ -81,7 +81,7 @@ export async function getQuotes() {
 
 export async function getTasks() {
   try {
-    const response = await axios.get(`${apiUrl}/task`, {
+    const response = await axios.get(`${apiUrl}/task//getUserTasks?userId=${ localStorage.getItem('userId') }`, {
         withCredentials: true
     });
     return response.data;

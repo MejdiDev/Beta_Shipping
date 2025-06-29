@@ -1,81 +1,57 @@
+import CardPageShipmentsAdmin from "components/Cards/CardPageShipmentsAdmin";
+import CardPageUsers from "components/Cards/CardPageUsers";
+import CardTasksAdmin from "components/Cards/CardTasksAdmin";
+import HeaderStats from "components/Headers/HeaderStats";
 import React, { useEffect, useState } from "react";
+import { getQuotes } from "services/ApiAdmin";
 
 // components
 import { getClients } from "services/ApiAdmin";
-import CardTable from "components/Cards/CardTable";
-import HeaderStats from "components/Headers/HeaderStats";
-import { getRoleColor } from "services/ApiAdmin";
+import { toastErr } from "services/ApiAll";
 
 export default function AdminDashboard() {
-  const [users, setUsers] = useState([]);
-
-  const getRoleLabel = role => {
-    switch(role) {
-      case "client":
-        return "Client"
-
-      case "salesAgent":
-        return "Sales"
-
-      case "operationalOfficer":
-        return "Operations"
-
-      case "Manager":
-        return "Manager"
-
-      default:
-        return role
-    }
-  }
-
-  const getData = () => {
-    getClients()
-      .then((response) => {
-          setUsers(response);
-      })
-      .catch((error) => {
-          console.error("Error fetching quotes:", error);
-      });
-  }
-
+  const [quotes, setQuotes] = useState([]);
+    
   useEffect(() => {
-    getData()
+      getQuotes()
+          .then((response) => {
+            
+          })
+          .catch((error) => {
+              console.error("Error fetching quotes:", error);
+              toastErr(error.message)
+          });
   }, [])
 
   return (
-    <>
-      <div className="relative bg-blueGray-100">
-        <HeaderStats
-            stats={[
-                { bg: "#3fccc1", num: users.filter(el => el.role === "client").length, title: "Clients", icon: "fa fa-file"},
-                { bg: "#fe9a3b", num: users.filter(el => el.role === "salesAgent").length, title: "Accepted", icon: "fa fa-check"},
-                { bg: "#374658", num: users.filter(el => el.role === "operationalOfficer").length, title: "Officers", icon: "fa fa-box"},
-                { bg: "#f44336", num: users.filter(el => el.role === "manager").length, title: "Managers", icon: "fa fa-times"}
-              ]}
-        />
-
-        <div className="w-full mb-12 -mt-24 flex justify-center" style={{ paddingLeft: "3.5rem", paddingRight: "3.5rem" }}>
-            <CardTable
+      <>
+          <div className="relative bg-blueGray-100">
+              <HeaderStats
                 model="User"
-                editable={ true }
-
-                leads={ users }
-                getData={ getData }
-
-                fields={[
-                    "name",
-                    "email",
-                    "phone",
-
-                    {
-                      label: "role",
-                      formatFct: getRoleLabel,
-                      colorFct: getRoleColor
-                    }
+                stats={[
+                    { bg: "#374658", num: quotes.length, title: "Total", icon: "fa fa-box"},
+                    { bg: "#3fccc1", num: quotes.filter(el => el.status === "pending").length, title: "Pending", icon: "fa fa-file"},
+                    { bg: "#fe9a3b", num: quotes.filter(el => el.status === "quoted").length, title: "Accepted", icon: "fa fa-check"},
+                    { bg: "#f44336", num: quotes.filter(el => el.status === "rejected").length, title: "Rejected", icon: "fa fa-times"}
                 ]}
-            />
-        </div>
-      </div>
-    </>
+              />
+
+              <div className="px-4 md:px-10 mx-auto w-full -m-24 mb-24">
+                <div className="w-full mb-12 xl:mb-0 px-4">
+                    <CardPageShipmentsAdmin />
+                </div>
+                
+                  <div className="flex flex-wrap mt-4">
+                      <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+                        <CardPageUsers />
+                      </div>
+
+                      <div className="w-full xl:w-4/12 px-4">
+                        <CardTasksAdmin />
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </>
   );
 }
