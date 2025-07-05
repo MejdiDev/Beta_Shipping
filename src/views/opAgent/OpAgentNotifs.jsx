@@ -1,5 +1,6 @@
 import CardNotifs from "components/Cards/CardNotifs";
 import { useEffect, useState } from "react";
+import { toastErr } from "services/ApiAll";
 import { getNotifs } from "services/ApiOperationalOfficer";
 
 const OpAgentNotifs = () => {
@@ -14,6 +15,7 @@ const OpAgentNotifs = () => {
                 setNotifs(response);
             })
             .catch((error) => {
+                toastErr(error.message)
                 console.error("Error fetching quotes:", error);
             });
     }

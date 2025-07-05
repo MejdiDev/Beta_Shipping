@@ -229,7 +229,7 @@ export const EditShip = ({ getData, formData, setFormData, setFocusShip, clients
                         }}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">Select a client</option>
+                        <option value="">--- Select a client ---</option>
 
                         {
                             clients.map(client => (
@@ -260,6 +260,8 @@ export const EditShip = ({ getData, formData, setFormData, setFocusShip, clients
                             }}
                             className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
+                            <option value="">--- Select Status ---</option>
+
                             <option value="created">Created</option>
                             <option value="in transit">In Transit</option>
                             <option value="delivered">Delivered</option>
@@ -290,11 +292,15 @@ const AddDoc = ({ docData, setDocData, focusShip, getData }) => {
 
     const handleSubmit = e => {
         e.preventDefault();
+        if(!validateForm({ formData: docData }) || !upFile) return
 
         const formData = new FormData();
-        formData.append('shipmentId', focusShip._id);
+        formData.append('shipmentId', focusShip.shipmentId);
         formData.append('clientId', focusShip.clientId);
+
         formData.append('documentType', docData.documentType);
+        formData.append('documentCategory', docData.documentCategory);
+
         formData.append('document', upFile);
 
         uploadDocument(formData)
@@ -326,6 +332,8 @@ const AddDoc = ({ docData, setDocData, focusShip, getData }) => {
                         onChange={ e => setDocData({ ...docData, documentType: e.target.value }) }
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
+                        <option value="">--- Select document type ---</option>
+
                         {
                             docTypeOpt.map((docType, index) => (
                                 <option key={ index } value={ docType }>
@@ -345,6 +353,8 @@ const AddDoc = ({ docData, setDocData, focusShip, getData }) => {
                         onChange={ e => setDocData({ ...docData, documentCategory: e.target.value }) }
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
+                        <option value="">--- Select document category ---</option>
+
                         <option value="financial">Financial</option>
                         <option value="operational">Operational</option>
                     </select>
@@ -384,7 +394,7 @@ const ShipmentList = ({ getShipments, role }) => {
     const [shipType, setShipType] = useState("");
     const [incoterm, setIncoterm] = useState("");
 
-    const [docData, setDocData] = useState({ fileName: "", documentType: "" });
+    const [docData, setDocData] = useState({ fileName: "", documentType: "", documentCategory: "" });
 
     const [floatingTab, setFloatingTab] = useState();
     const [shipFormData, setShipFormData] = useState(initFormData);

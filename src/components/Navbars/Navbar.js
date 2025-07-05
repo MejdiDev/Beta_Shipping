@@ -22,8 +22,8 @@ export default function Navbar({ routes }) {
 
   return (
     <>
-      <nav className="top-0 z-50 w-full flex flex-wrap items-center justify-between py-2 pb-6 navbar-expand-lg bg-light-background-gradient shadow">
-        <div className="container px-1 mx-auto flex flex-wrap items-center justify-between">
+      <nav className="top-0 z-50 w-full flex items-center justify-between py-2 pb-6 navbar-expand-lg bg-light-background-gradient shadow">
+        <div className="w-full container px-4 mx-auto flex items-center justify-between">
           <div style={{ width: "55px", height: "55px", padding: ".5rem" }} className="bg-lightBlue-500 rounded-lg flex items-center justify-center mr-2">
             <ShipIcon size={56} className="text-white" />
           </div>
@@ -34,6 +34,9 @@ export default function Navbar({ routes }) {
             >
               Doc Flow
             </Link>
+          </div>
+
+          <div>
             <button
               className="cursor-pointer text-sm leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
               type="button"
@@ -84,11 +87,6 @@ export default function Navbar({ routes }) {
                   }
                 </Link>
               </li>
-
-              {/* <li className="flex items-center -mt-5">
-                <UserDropdown />
-              </li> */}
-              {/* ... other navbar items ... */}
             </ul>
           </div>
         </div>

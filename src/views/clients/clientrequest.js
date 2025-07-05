@@ -66,9 +66,8 @@ export const initFormData = {
 }
 
 export const validateForm = ({ formData, activeTab }) => {
-    console.log(formData[ activeTab.toLowerCase() ])
     let isValid = true;
-    const currentFormData = formData[ activeTab.toLowerCase() ];
+    const currentFormData = activeTab ? formData[ activeTab.toLowerCase() ] : formData;
     
     Object.keys(currentFormData).forEach((fieldName) => {
       const fieldValue = currentFormData[fieldName];

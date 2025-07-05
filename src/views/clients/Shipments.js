@@ -120,7 +120,7 @@ export default function Shipments() {
             {shownShips.length > 0 ? (
               shownShips.map((shipment, index) =>
                 <div className="bg-white shadow-lg rounded-xl overflow-hidden mb-8">
-                  { getCard({ quote: shipment, index, model: "shipment" }) }
+                  { getCard({ quote: shipment, index, to: ('/client/shipment/' + shipment.shipmentId), model: "shipment" }) }
                 </div>
               )
             ) : (
